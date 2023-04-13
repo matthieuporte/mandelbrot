@@ -9,6 +9,6 @@ It is the last function of the file fractals.ml
 
 Enjoy !
 
-[mandelbrot]: "https://matthieuporte.github.io/assets/images/mandelbrot.png"
+[mandelbrot]: https://matthieuporte.github.io/assets/images/mandelbrot.png
 
 ![what mandelbrot can look like when you zoom in][mandelbrot]
