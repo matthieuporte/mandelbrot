@@ -1,5 +1,9 @@
 # mandelbrot
-One of our first tp at EPITA was to draw some fractals in ocaml. One I'm proud of is mandelbrot. The mandelbrot function allows you to really zoom in the fractal which makes it much more interesting. It works like this : 
+
+`make` and then `./main` to explore mandelbrot.
+
+To see the ocaml version (non interactive) look in `ocaml/`
+
 ```ocaml
 mandelbrot [int : degree of prescision] 
 [float * float : x and y coords of the bottom left corner]
