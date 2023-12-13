@@ -45,16 +45,16 @@ void mandelbrot(SDL_Surface* surface, double startReal, double startIm,
 										double zoom,int curIt, int maxIt){
 	Uint32* pixels = (Uint32*)surface->pixels;
 
-	int sizePalette = 6;
+	int sizePalette = 4;
 	int nbRepeat = 1;
 
-	int r[] = {0,1,1,1,1,1};
-	int g[] = {0,0,1,1,1,0};
-	int b[] = {0,0,0,1,0,0};
+	/* int r[] = {0,1,1,1,1,1}; */
+	/* int g[] = {0,0,1,1,1,0}; */
+	/* int b[] = {0,0,0,1,0,0}; */
 
-	/* int r[] = {1,0,0,1}; */
-	/* int g[] = {1,0,0,0}; */
-	/* int b[] = {1,1,0,1}; */
+	int r[] = {1,0,0,1};
+	int g[] = {1,0,0,0};
+	int b[] = {1,1,0,1};
 
 	double w = surface->w;
 	double h = surface->h;

@@ -33,7 +33,7 @@ void smooth_draw(SDL_Renderer* renderer, SDL_Surface* surface, double real, doub
 	}
 }
 
-void event_loop(SDL_Renderer* renderer, Node* head)
+void event_loop(SDL_Renderer* renderer, Node** head)
 {
     // Width and height of the window.
     int w = INIT_WIDTH;
@@ -46,9 +46,9 @@ void event_loop(SDL_Renderer* renderer, Node* head)
 	int maxIt = 300;
 	double scrollSpeed = 1.5;
 	double scroll = 2;
-	Node* curNode = head;
+	Node* curNode = *head;
 
-	SDL_Surface* surface = head->data;
+	SDL_Surface* surface = (*head)->data;
 
     // Draws the fractal canopy (first draw).
     smooth_draw(renderer, surface, real, im, zoom, maxIt);
@@ -87,7 +87,7 @@ void event_loop(SDL_Renderer* renderer, Node* head)
 
 					SDL_Surface* newSurface = SDL_CreateRGBSurface(0, INIT_WIDTH,
 									INIT_HEIGHT,32, 0,0,0,0);
-					insert(&head,newSurface,real,im,zoom,scroll);
+					insert(head,newSurface,real,im,zoom,scroll);
 					curNode = curNode->next;
 					smooth_draw(renderer, newSurface, real, im, zoom, maxIt);
 				}
@@ -101,7 +101,7 @@ void event_loop(SDL_Renderer* renderer, Node* head)
 					if (curNode->prev != NULL){
 						SDL_FreeSurface(curNode->data);
 						Node* p = curNode->prev;
-						deleteNode(&head,curNode);
+						deleteNode(head,curNode);
 						curNode = p;
 						real = curNode->real;
 						im = curNode->im;
@@ -139,10 +139,20 @@ int main(int argc, char *argv[]){
 	if (renderer == NULL)
 		errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-	event_loop(renderer,head);
+	event_loop(renderer,&head);
+
+	while (head->prev != NULL)
+		head = head->prev;
+
+	while (head->next != NULL){
+		SDL_FreeSurface(head->data);
+		Node* prev = head;
+		head = head->next;
+		free(prev);
+	}
+	free(head);
 
 	SDL_DestroyRenderer(renderer);
-	SDL_FreeSurface(surface);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 
