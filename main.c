@@ -9,13 +9,13 @@ const int INIT_HEIGHT = 1000;
 
 
 void draw(SDL_Renderer* renderer, SDL_Surface* surface, double real,
-		double im, double zoom, int maxIt)
+		double im, double zoom, int curIt,int maxIt)
 {
 
 	if (maxIt != -1){
 		SDL_LockSurface(surface);
     	// Draws the fractal canopy.
-		mandelbrot(surface, real, im, zoom, maxIt);
+		mandelbrot(surface, real, im, zoom, curIt, maxIt);
 		SDL_UnlockSurface(surface);
 	}
 
@@ -26,12 +26,12 @@ void draw(SDL_Renderer* renderer, SDL_Surface* surface, double real,
     SDL_RenderPresent(renderer);
 }
 
-/* void smooth_draw(SDL_Renderer* renderer, SDL_Surface* surface, double real, double im, */
-/* 													double zoom, int maxIt){ */
-/* 	for (size_t i = maxIt/3; i < maxIt; i += 10){ */
-/* 		draw(renderer, surface, real, im ,zoom, i); */
-/* 	} */
-/* } */
+void smooth_draw(SDL_Renderer* renderer, SDL_Surface* surface, double real, double im,
+													double zoom, int maxIt){
+	for (size_t i = 290; i < maxIt; i += 10){
+		draw(renderer, surface, real, im ,zoom, i, maxIt);
+	}
+}
 
 void event_loop(SDL_Renderer* renderer, Node* head)
 {
@@ -44,14 +44,14 @@ void event_loop(SDL_Renderer* renderer, Node* head)
 	double im = 1.5;
 	double zoom = 3;
 	int maxIt = 300;
-	double scrollSpeed = 6;
-	double scroll = 0.5;
+	double scrollSpeed = 1.5;
+	double scroll = 2;
 	Node* curNode = head;
 
 	SDL_Surface* surface = head->data;
 
     // Draws the fractal canopy (first draw).
-    draw(renderer, surface, real, im, zoom, maxIt);
+    smooth_draw(renderer, surface, real, im, zoom, maxIt);
 
     // Creates a variable to get the events.
     SDL_Event event;
@@ -73,7 +73,7 @@ void event_loop(SDL_Renderer* renderer, Node* head)
                 {
                     w = event.window.data1;
                     h = event.window.data2;
-    				draw(renderer, curNode->data, real, im, zoom, maxIt);
+    				smooth_draw(renderer, curNode->data, real, im, zoom, maxIt);
                 }
                 break;
 
@@ -87,24 +87,28 @@ void event_loop(SDL_Renderer* renderer, Node* head)
 
 					SDL_Surface* newSurface = SDL_CreateRGBSurface(0, INIT_WIDTH,
 									INIT_HEIGHT,32, 0,0,0,0);
-					insert(&head,newSurface);
+					insert(&head,newSurface,real,im,zoom,scroll);
 					curNode = curNode->next;
-					draw(renderer, newSurface, real, im, zoom, maxIt);
+					smooth_draw(renderer, newSurface, real, im, zoom, maxIt);
 				}
 				if (event.button.button == SDL_BUTTON_RIGHT){
-					SDL_GetMouseState(&x, &y);
-					real -= (double)x/w*scroll;
-					im += (double)y/h*scroll;
-					zoom += scroll;
-					scroll = zoom/scrollSpeed;
+					/* SDL_GetMouseState(&x, &y); */
+					/* real -= (double)x/w*scroll; */
+					/* im += (double)y/h*scroll; */
+					/* zoom += scroll; */
+					/* scroll = zoom/scrollSpeed; */
 					
 					if (curNode->prev != NULL){
 						SDL_FreeSurface(curNode->data);
 						Node* p = curNode->prev;
 						deleteNode(&head,curNode);
 						curNode = p;
+						real = curNode->real;
+						im = curNode->im;
+						zoom = curNode->zoom;
+						scroll = curNode->scroll;
 					}
-					draw(renderer, curNode->data, real, im, zoom, -1);
+					draw(renderer, curNode->data, real, im, zoom,-1, -1);
 				}
 				break;
         }
@@ -130,7 +134,7 @@ int main(int argc, char *argv[]){
 	SDL_Surface* surface = SDL_CreateRGBSurface(0, INIT_WIDTH, INIT_HEIGHT,
 												32, 0,0,0,0);
 
-	insert(&head,surface);
+	insert(&head,surface,-2,1.5,3,2);
 
 	if (renderer == NULL)
 		errx(EXIT_FAILURE, "%s", SDL_GetError());

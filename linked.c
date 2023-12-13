@@ -4,12 +4,17 @@
 #include "linked.h"
 
 // insert a newNode at the end of the list
-void insert(struct Node** head, SDL_Surface* data) {
+void insert(struct Node** head, SDL_Surface* data,double real, double im,
+									double zoom, double scroll) {
     // allocate memory for node
 	struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
 
     // assign data to newNode
     newNode->data = data;
+    newNode->real = real;
+	newNode->im = im;
+	newNode->zoom = zoom;
+	newNode->scroll = scroll;
 
     // assign NULL to next of newNode
     newNode->next = NULL;

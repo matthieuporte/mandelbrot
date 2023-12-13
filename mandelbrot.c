@@ -42,7 +42,7 @@ int optim1(double x, double y){
 
 
 void mandelbrot(SDL_Surface* surface, double startReal, double startIm, 
-													double zoom, int maxIt){
+										double zoom,int curIt, int maxIt){
 	Uint32* pixels = (Uint32*)surface->pixels;
 
 	int sizePalette = 6;
@@ -71,7 +71,7 @@ void mandelbrot(SDL_Surface* surface, double startReal, double startIm,
 			if (optim1(real,im)){
 	            pixels[i] = SDL_MapRGB(surface->format, 0, 0, 0);
 			} else {
-				int n = divergence(real,im,maxIt);
+				int n = divergence(real,im,curIt);
 				if (n == -1)
 					pixels[i] = SDL_MapRGB(surface->format, 0, 0, 0);
 				else {
