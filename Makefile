@@ -7,7 +7,7 @@ CFLAGS = -g -lm -fsanitize=address -Wall -Wconversion -Wextra `pkg-config --cfla
 LDLIBS = `pkg-config --libs sdl2 SDL2_image` -lm
 
 
-OBJ = main.o mandelbrot.o
+OBJ = main.o mandelbrot.o linked.o
 DEP = ${OBJ:.o=.d}
 
 all: main

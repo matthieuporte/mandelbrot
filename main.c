@@ -1,8 +1,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_timer.h>
 #include <err.h>
 #include "mandelbrot.h"
+#include "linked.h"
 
 const int INIT_WIDTH = 1000;
 const int INIT_HEIGHT = 1000;
@@ -12,11 +12,12 @@ void draw(SDL_Renderer* renderer, SDL_Surface* surface, double real,
 		double im, double zoom, int maxIt)
 {
 
-	SDL_LockSurface(surface);
-    // Draws the fractal canopy.
-	mandelbrot(surface, real, im, zoom, maxIt);
-	SDL_UnlockSurface(surface);
-
+	if (maxIt != -1){
+		SDL_LockSurface(surface);
+    	// Draws the fractal canopy.
+		mandelbrot(surface, real, im, zoom, maxIt);
+		SDL_UnlockSurface(surface);
+	}
 
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 
@@ -25,14 +26,14 @@ void draw(SDL_Renderer* renderer, SDL_Surface* surface, double real,
     SDL_RenderPresent(renderer);
 }
 
-void smooth_draw(SDL_Renderer* renderer, SDL_Surface* surface, double real, double im,
-													double zoom, int maxIt){
-	for (size_t i = maxIt/3; i < maxIt; i += 10){
-		draw(renderer, surface, real, im ,zoom, i);
-	}
-}
+/* void smooth_draw(SDL_Renderer* renderer, SDL_Surface* surface, double real, double im, */
+/* 													double zoom, int maxIt){ */
+/* 	for (size_t i = maxIt/3; i < maxIt; i += 10){ */
+/* 		draw(renderer, surface, real, im ,zoom, i); */
+/* 	} */
+/* } */
 
-void event_loop(SDL_Renderer* renderer, SDL_Surface* surface)
+void event_loop(SDL_Renderer* renderer, Node* head)
 {
     // Width and height of the window.
     int w = INIT_WIDTH;
@@ -43,14 +44,14 @@ void event_loop(SDL_Renderer* renderer, SDL_Surface* surface)
 	double im = 1.5;
 	double zoom = 3;
 	int maxIt = 300;
-	int curIt = maxIt;
-	int discretion = maxIt/2;
 	double scrollSpeed = 6;
 	double scroll = 0.5;
-	
+	Node* curNode = head;
+
+	SDL_Surface* surface = head->data;
 
     // Draws the fractal canopy (first draw).
-    smooth_draw(renderer, surface, real, im, zoom, maxIt);
+    draw(renderer, surface, real, im, zoom, maxIt);
 
     // Creates a variable to get the events.
     SDL_Event event;
@@ -72,35 +73,40 @@ void event_loop(SDL_Renderer* renderer, SDL_Surface* surface)
                 {
                     w = event.window.data1;
                     h = event.window.data2;
-					curIt = discretion;
-    				draw(renderer, surface, real, im, zoom, curIt);
+    				draw(renderer, curNode->data, real, im, zoom, maxIt);
                 }
                 break;
 
-			case SDL_MOUSEWHEEL:
-				if (event.wheel.y > 0){
+			case SDL_MOUSEBUTTONDOWN:
+				if (event.button.button == SDL_BUTTON_LEFT){
 					SDL_GetMouseState(&x, &y);
 					real += (double)x/w*scroll;
 					im -= (double)y/h*scroll;
 					zoom -= scroll;
 					scroll = zoom/scrollSpeed;
-					curIt = discretion;
+
+					SDL_Surface* newSurface = SDL_CreateRGBSurface(0, INIT_WIDTH,
+									INIT_HEIGHT,32, 0,0,0,0);
+					insert(&head,newSurface);
+					curNode = curNode->next;
+					draw(renderer, newSurface, real, im, zoom, maxIt);
 				}
-				else if (event.wheel.y < 0){
+				if (event.button.button == SDL_BUTTON_RIGHT){
 					SDL_GetMouseState(&x, &y);
 					real -= (double)x/w*scroll;
 					im += (double)y/h*scroll;
 					zoom += scroll;
 					scroll = zoom/scrollSpeed;
-					curIt = discretion;
+					
+					if (curNode->prev != NULL){
+						SDL_FreeSurface(curNode->data);
+						Node* p = curNode->prev;
+						deleteNode(&head,curNode);
+						curNode = p;
+					}
+					draw(renderer, curNode->data, real, im, zoom, -1);
 				}
-    			draw(renderer, surface, real, im, zoom, curIt);
 				break;
-			default:
-				if (curIt < maxIt){
-					curIt += discretion;
-    				smooth_draw(renderer, surface, real, im, zoom, curIt);
-				}
         }
     }
 }
@@ -120,13 +126,16 @@ int main(int argc, char *argv[]){
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 
 													SDL_RENDERER_ACCELERATED);
 
-	SDL_Surface* surface  = SDL_CreateRGBSurface(0, INIT_WIDTH, INIT_HEIGHT,
+	Node* head = NULL;
+	SDL_Surface* surface = SDL_CreateRGBSurface(0, INIT_WIDTH, INIT_HEIGHT,
 												32, 0,0,0,0);
+
+	insert(&head,surface);
 
 	if (renderer == NULL)
 		errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-	event_loop(renderer,surface);
+	event_loop(renderer,head);
 
 	SDL_DestroyRenderer(renderer);
 	SDL_FreeSurface(surface);
