@@ -4,4 +4,9 @@
 #include <SDL2/SDL_timer.h>
 #include <err.h>
 
-void mandelbrot(SDL_Surface* surface, double a, double b, double c,int e,int d);
+typedef struct point {
+	int x;
+	int y;
+}point;
+
+void mandelbrot(SDL_Surface* surface, point* co, size_t n, double a, double b, double c,int d);

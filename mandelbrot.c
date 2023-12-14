@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <err.h>
 #include <math.h>
+#include "mandelbrot.h"
 
 // a^2 - b^2 + 2abi
 void complexSquared(double* real, double* im){
@@ -41,20 +42,24 @@ int optim1(double x, double y){
 }
 
 
-void mandelbrot(SDL_Surface* surface, double startReal, double startIm, 
-										double zoom,int curIt, int maxIt){
+void mandelbrot(SDL_Surface* surface,point* coordinates,size_t n_coord,
+		double startReal,	double startIm, double zoom, int maxIt){
 	Uint32* pixels = (Uint32*)surface->pixels;
 
-	int sizePalette = 4;
+	int sizePalette = 3;
 	int nbRepeat = 1;
 
 	/* int r[] = {0,1,1,1,1,1}; */
 	/* int g[] = {0,0,1,1,1,0}; */
 	/* int b[] = {0,0,0,1,0,0}; */
 
-	int r[] = {1,0,0,1};
-	int g[] = {1,0,0,0};
-	int b[] = {1,1,0,1};
+	int r[] = {0,0,1};
+	int g[] = {0,0,1};
+	int b[] = {0,1,1};
+
+	/* int r[] = {1,0,0,1}; */
+	/* int g[] = {1,0,0,0}; */
+	/* int b[] = {1,1,0,1}; */
 
 	double w = surface->w;
 	double h = surface->h;
@@ -62,29 +67,30 @@ void mandelbrot(SDL_Surface* surface, double startReal, double startIm,
 	double nudge_x = zoom/w;
 	double nudge_y = zoom/h;
 
-	double x, y;
-    for (y = 0; y < h; ++y) {
-        for (x = 0; x < w; ++x) {
-            int i = (int)y * (int)w + (int)x;
-			double real = startReal + x*nudge_x;
-			double im = startIm - y*nudge_y;
-			if (optim1(real,im)){
-	            pixels[i] = SDL_MapRGB(surface->format, 0, 0, 0);
-			} else {
-				int n = divergence(real,im,curIt);
-				if (n == -1)
-					pixels[i] = SDL_MapRGB(surface->format, 0, 0, 0);
-				else {
-					int bloc = maxIt/sizePalette/nbRepeat + 1;
-					int dist = (n%bloc)*255/bloc;
-					int p1 = n/bloc;
-					int p2 = (p1 + 1)%sizePalette;
-					pixels[i] = SDL_MapRGB(surface->format, 
-							r[p2]*dist + r[p1]*(255 - dist),
-							g[p2]*dist + g[p1]*(255 - dist),
-							b[p2]*dist + b[p1]*(255 - dist)); 
-				}
+
+	for (size_t p = 0; p < n_coord; p++){
+		int y = coordinates[p].y;
+		int x = coordinates[p].x;
+		int i = (int)y * (int)w + (int)x;
+		double real = startReal + x*nudge_x;
+		double im = startIm - y*nudge_y;
+		if (optim1(real,im)){
+			pixels[i] = SDL_MapRGB(surface->format, 0, 0, 0);
+		} else {
+			int n = divergence(real,im,maxIt);
+			if (n == -1)
+				pixels[i] = SDL_MapRGB(surface->format, 0, 0, 0);
+			else {
+				int bloc = maxIt/sizePalette/nbRepeat + 1;
+				int dist = (n%bloc)*255/bloc;
+				int p1 = n/bloc;
+				int p2 = (p1 + 1)%sizePalette;
+				pixels[i] = SDL_MapRGB(surface->format, 
+						r[p2]*dist + r[p1]*(255 - dist),
+						g[p2]*dist + g[p1]*(255 - dist),
+						b[p2]*dist + b[p1]*(255 - dist)); 
 			}
-        }
-    }
+		}
+	}
+
 }
