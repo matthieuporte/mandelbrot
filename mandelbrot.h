@@ -9,4 +9,10 @@ typedef struct point {
 	int y;
 }point;
 
-void mandelbrot(SDL_Surface* surface, point* co, size_t n, double a, double b, double c,int d);
+typedef struct palette {
+	int n;
+	int* colors;
+}palette;
+
+void mandelbrot(SDL_Surface* surface, point* co, palette pa,
+		size_t n, double a, double b, double c,int d);

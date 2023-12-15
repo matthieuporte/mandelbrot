@@ -42,24 +42,29 @@ int optim1(double x, double y){
 }
 
 
-void mandelbrot(SDL_Surface* surface,point* coordinates,size_t n_coord,
-		double startReal,	double startIm, double zoom, int maxIt){
+void mandelbrot(SDL_Surface* surface,point* coordinates, palette pa, 
+	size_t n_coord,	double startReal,double startIm, double zoom, int maxIt){
+
 	Uint32* pixels = (Uint32*)surface->pixels;
 
-	int sizePalette = 6;
-	int nbRepeat = 4;
+	int sizePalette = pa.n;
+	int nbRepeat = 3;
 
-	int r[] = {0,1,1,1,1,1};
-	int g[] = {0,0,1,1,1,0};
-	int b[] = {0,0,0,1,0,0};
+	/* int r[] = {0,1,1,1,1,1}; */
+	/* int g[] = {0,0,1,1,1,0}; */
+	/* int b[] = {0,0,0,1,0,0}; */
 
-	/* int r[] = {0,0,1}; */
-	/* int g[] = {0,0,1}; */
-	/* int b[] = {0,1,1}; */
+	/* int r[] = {0,0  ,255}; */
+	/* int g[] = {0,0  ,255}; */
+	/* int b[] = {0,255,255}; */
 
 	/* int r[] = {1,0,0,1}; */
 	/* int g[] = {1,0,0,0}; */
 	/* int b[] = {1,1,0,1}; */
+
+	/* int r[] = {255,255,135,0  ,0  }; */
+	/* int g[] = {255,204,31 ,0  ,102}; */
+	/* int b[] = {255,0  ,19 ,153,255}; */
 
 	double w = surface->w;
 	double h = surface->h;
@@ -87,10 +92,14 @@ void mandelbrot(SDL_Surface* surface,point* coordinates,size_t n_coord,
 				/* printf("dist = %d\n",dist); */
 				int p1 = (n/bloc)%sizePalette;
 				int p2 = (p1 + 1)%sizePalette;
-				pixels[i] = SDL_MapRGB(surface->format, 
-						r[p2]*dist + r[p1]*(255 - dist),
-						g[p2]*dist + g[p1]*(255 - dist),
-						b[p2]*dist + b[p1]*(255 - dist)); 
+				pixels[i] = SDL_MapRGB(surface->format,
+					(pa.colors[p2*3]*dist + pa.colors[p1*3]*(255 - dist))/255,
+					(pa.colors[p2*3+1]*dist + pa.colors[p1*3+1]*(255 - dist))/255,
+					(pa.colors[p2*3+2]*dist + pa.colors[p1*3+2]*(255 - dist))/255);
+				/* pixels[i] = SDL_MapRGB(surface->format, */ 
+				/* 		(r[p2]*dist + r[p1]*(255 - dist))/255, */
+				/* 		(g[p2]*dist + g[p1]*(255 - dist))/255, */
+				/* 		(b[p2]*dist + b[p1]*(255 - dist))/255); */ 
 			}
 		}
 	}

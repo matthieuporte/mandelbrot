@@ -12,6 +12,7 @@ const int INIT_HEIGHT = 1000;
 typedef struct thread_data{
 	SDL_Surface* surface;
 	point* coordinates;
+	palette p;
 	size_t size;
 	double real;
 	double im;
@@ -33,10 +34,11 @@ void coorShuff (point coord[],int n){
 
 void *worker(void* arg){	
 	thread_data* d = (thread_data *)arg;
-	mandelbrot(d->surface,d->coordinates,d->size, d->real, d->im, d->zoom, d->maxIt);
+	mandelbrot(d->surface,d->coordinates,d->p,d->size, d->real, d->im, d->zoom, d->maxIt);
+	return NULL;
 }
 
-void draw(SDL_Renderer* renderer, SDL_Surface* surface, double real,
+void draw(SDL_Renderer* renderer, SDL_Surface* surface,palette p, double real,
 		double im, double zoom,int maxIt)
 {
 
@@ -79,6 +81,7 @@ void draw(SDL_Renderer* renderer, SDL_Surface* surface, double real,
 			int ind = i * nbThreads + j;
 			data[ind].surface = surface;
 			data[ind].coordinates = coordinates+(i*nbThreads+j)*size;
+			data[ind].p = p;
 			data[ind].size = (size_t)size;
 			if (i == nbStep - 1)
 				data[ind].size += (size_t)remSize;
@@ -104,7 +107,7 @@ void draw(SDL_Renderer* renderer, SDL_Surface* surface, double real,
 }
 
 
-void event_loop(SDL_Renderer* renderer, Node* head)
+void event_loop(SDL_Renderer* renderer, Node* head,palette p)
 {
     // Width and height of the window.
     int w = INIT_WIDTH;
@@ -122,7 +125,7 @@ void event_loop(SDL_Renderer* renderer, Node* head)
 	SDL_Surface* surface = head->data;
 
     // Draws the fractal canopy (first draw).
-    draw(renderer, surface, real, im, zoom, maxIt);
+    draw(renderer, surface,p, real, im, zoom, maxIt);
 
     // Creates a variable to get the events.
     SDL_Event event;
@@ -144,7 +147,7 @@ void event_loop(SDL_Renderer* renderer, Node* head)
                 {
                     w = event.window.data1;
                     h = event.window.data2;
-    				draw(renderer, curNode->data, real, im, zoom, maxIt);
+    				draw(renderer, curNode->data,p, real, im, zoom, maxIt);
                 }
                 break;
 
@@ -160,7 +163,7 @@ void event_loop(SDL_Renderer* renderer, Node* head)
 									INIT_HEIGHT,32, 0,0,0,0);
 					insert(&head,newSurface,real,im,zoom,scroll);
 					curNode = curNode->next;
-					draw(renderer, newSurface, real, im, zoom, maxIt);
+					draw(renderer, newSurface,p, real, im, zoom, maxIt);
 				}
 				if (event.button.button == SDL_BUTTON_RIGHT){
 					/* SDL_GetMouseState(&x, &y); */
@@ -179,15 +182,80 @@ void event_loop(SDL_Renderer* renderer, Node* head)
 						zoom = curNode->zoom;
 						scroll = curNode->scroll;
 					}
-					draw(renderer, curNode->data, real, im, zoom, -1);
+					draw(renderer, curNode->data,p, real, im, zoom, -1);
 				}
 				break;
         }
     }
 }
 
+int ctoi (char c){
+	if (c <= 'G' && c >= 'A')
+		return c - 'A' + 10;
+	if (c <= 'g' && c >= 'a')
+		return c - 'a' + 10;
+	if (c <= '9' && c >= '0')
+		return c - '0';
+	errx(EXIT_FAILURE,"Not a valid hex");
+}
+
+palette parse(char* filename){
+	palette p;
+
+	p.colors = malloc(3*sizeof(int));
+
+	int n = 0;
+	FILE *fptr;
+
+	fptr = fopen(filename, "r");
+
+	char * line = NULL;
+	size_t len = 0;
+	ssize_t read;
+
+	while ((read = getline(&line, &len, fptr)) != -1){
+		if (line[7] != '\n'){
+			printf("len is %zu :%c;\n",len,line[7]);
+			errx(EXIT_FAILURE, "Malformated palette file (hex size)");
+		}
+		n++;
+		p.colors = realloc(p.colors,3*n*sizeof(int));
+		p.colors[(n-1)*3] = ctoi(line[1])*16 + ctoi(line[2]);// red
+		p.colors[(n-1)*3+1] = ctoi(line[3])*16 + ctoi(line[4]);// green
+		p.colors[(n-1)*3+2] = ctoi(line[5])*16 + ctoi(line[6]);// blue
+	}
+
+	if (n == 0)
+		errx(EXIT_FAILURE, "The palette must have one color");
+
+	fclose(fptr);
+
+	p.n = n;
+
+	return p;
+
+}
 
 int main(int argc, char *argv[]){
+	palette basic;
+	if (argc > 2){
+		printf("Use : %s (./path_to_your_theme)\n",argv[0]);
+		return 0;
+	}
+	else if (argc == 2){
+		basic = parse(argv[1]);
+	}
+	else {
+		basic.n = 2;
+		basic.colors = malloc(6*sizeof(int));
+		basic.colors[0] = 0;
+		basic.colors[1] = 0;
+		basic.colors[2] = 200;
+		basic.colors[3] = 255;
+		basic.colors[4] = 255;
+		basic.colors[5] = 255;
+	}
+
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
 		errx(EXIT_FAILURE, "%s", SDL_GetError());
 	}
@@ -210,7 +278,9 @@ int main(int argc, char *argv[]){
 	if (renderer == NULL)
 		errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-	event_loop(renderer,head);
+
+
+	event_loop(renderer,head,basic);
 
 	while (head != NULL){
 		SDL_FreeSurface(head->data);
@@ -219,6 +289,7 @@ int main(int argc, char *argv[]){
 		free(prev);
 	}
 
+	free(basic.colors);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
