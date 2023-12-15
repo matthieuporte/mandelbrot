@@ -212,13 +212,12 @@ int main(int argc, char *argv[]){
 
 	event_loop(renderer,head);
 
-	while (head->next != NULL){
+	while (head != NULL){
 		SDL_FreeSurface(head->data);
 		Node* prev = head;
 		head = head->next;
 		free(prev);
 	}
-	free(head);
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
