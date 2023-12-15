@@ -250,7 +250,7 @@ int main(int argc, char *argv[]){
 		basic.colors = malloc(6*sizeof(int));
 		basic.colors[0] = 0;
 		basic.colors[1] = 0;
-		basic.colors[2] = 200;
+		basic.colors[2] = 20;
 		basic.colors[3] = 255;
 		basic.colors[4] = 255;
 		basic.colors[5] = 255;
@@ -277,7 +277,6 @@ int main(int argc, char *argv[]){
 
 	if (renderer == NULL)
 		errx(EXIT_FAILURE, "%s", SDL_GetError());
-
 
 
 	event_loop(renderer,head,basic);

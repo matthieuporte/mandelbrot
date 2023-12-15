@@ -87,19 +87,13 @@ void mandelbrot(SDL_Surface* surface,point* coordinates, palette pa,
 				pixels[i] = SDL_MapRGB(surface->format, 0, 0, 0);
 			else {
 				int bloc = maxIt/(sizePalette*nbRepeat);
-				/* printf("bloc = %d\n",bloc); */
 				int dist = (n%bloc)*255/bloc;
-				/* printf("dist = %d\n",dist); */
 				int p1 = (n/bloc)%sizePalette;
 				int p2 = (p1 + 1)%sizePalette;
 				pixels[i] = SDL_MapRGB(surface->format,
 					(pa.colors[p2*3]*dist + pa.colors[p1*3]*(255 - dist))/255,
 					(pa.colors[p2*3+1]*dist + pa.colors[p1*3+1]*(255 - dist))/255,
 					(pa.colors[p2*3+2]*dist + pa.colors[p1*3+2]*(255 - dist))/255);
-				/* pixels[i] = SDL_MapRGB(surface->format, */ 
-				/* 		(r[p2]*dist + r[p1]*(255 - dist))/255, */
-				/* 		(g[p2]*dist + g[p1]*(255 - dist))/255, */
-				/* 		(b[p2]*dist + b[p1]*(255 - dist))/255); */ 
 			}
 		}
 	}
