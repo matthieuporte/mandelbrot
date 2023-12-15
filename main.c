@@ -2,11 +2,22 @@
 #include <SDL2/SDL_image.h>
 #include <err.h>
 #include <time.h>
+#include <pthread.h>
 #include "mandelbrot.h"
 #include "linked.h"
 
 const int INIT_WIDTH = 1000;
 const int INIT_HEIGHT = 1000;
+
+typedef struct thread_data{
+	SDL_Surface* surface;
+	point* coordinates;
+	size_t size;
+	double real;
+	double im;
+	double zoom;
+	int maxIt;
+}thread_data;
 
 void coorShuff (point coord[],int n){
 
@@ -18,6 +29,11 @@ void coorShuff (point coord[],int n){
 		coord[i] = coord[r];
 		coord[r] = p;
 	}
+}
+
+void *worker(void* arg){	
+	thread_data* d = (thread_data *)arg;
+	mandelbrot(d->surface,d->coordinates,d->size, d->real, d->im, d->zoom, d->maxIt);
 }
 
 void draw(SDL_Renderer* renderer, SDL_Surface* surface, double real,
@@ -36,9 +52,10 @@ void draw(SDL_Renderer* renderer, SDL_Surface* surface, double real,
 
 	int nbPix = INIT_WIDTH * INIT_HEIGHT;
 	int nbStep = 10;
+	int nbThreads = 16;
 
-	int size = nbPix/nbStep;
-	int remSize = nbPix%nbStep;
+	int size = nbPix/(nbStep*nbThreads);
+	int remSize = nbPix%(nbStep*nbThreads);
 
 	point coordinates[nbPix];
 
@@ -53,14 +70,29 @@ void draw(SDL_Renderer* renderer, SDL_Surface* surface, double real,
 
 	coorShuff(coordinates,nbPix);
 
+	pthread_t thr[nbThreads];
+	thread_data data[nbThreads*nbStep];
+
 	for (int i = 0; i< nbStep; i++){
 		SDL_LockSurface(surface);
-		// Draws the fractal canopy.
-		if (i == nbStep - 1)
-			mandelbrot(surface,coordinates+i*size,(size_t)(size + remSize), real, im, zoom, maxIt);
-		else
-			mandelbrot(surface,coordinates+i*size,(size_t)size, real, im, zoom, maxIt);
-
+		for (int j = 0; j < nbThreads; j++){
+			int ind = i * nbThreads + j;
+			data[ind].surface = surface;
+			data[ind].coordinates = coordinates+(i*nbThreads+j)*size;
+			data[ind].size = (size_t)size;
+			if (i == nbStep - 1)
+				data[ind].size += (size_t)remSize;
+			data[ind].real = real;
+			data[ind].im = im;
+			data[ind].zoom = zoom;
+			data[ind].maxIt = maxIt;
+			int e = pthread_create(thr+j, NULL, worker, (void *)(data+ind));
+			if (e != 0)
+				errx(EXIT_FAILURE, "pthread_create()");
+		}
+		for (int j = 0; j < nbThreads; j++){
+			pthread_join(thr[j],NULL);
+		}	
 		SDL_UnlockSurface(surface);
 
 		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -82,7 +114,7 @@ void event_loop(SDL_Renderer* renderer, Node* head)
 	double real = -2;
 	double im = 1.5;
 	double zoom = 3;
-	int maxIt = 500;
+	int maxIt = 1000;
 	double scrollSpeed = 1.5;
 	double scroll = 2;
 	Node* curNode = head;
