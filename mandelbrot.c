@@ -50,22 +50,6 @@ void mandelbrot(SDL_Surface* surface,point* coordinates, palette pa,
 	int sizePalette = pa.n;
 	int nbRepeat = 3;
 
-	/* int r[] = {0,1,1,1,1,1}; */
-	/* int g[] = {0,0,1,1,1,0}; */
-	/* int b[] = {0,0,0,1,0,0}; */
-
-	/* int r[] = {0,0  ,255}; */
-	/* int g[] = {0,0  ,255}; */
-	/* int b[] = {0,255,255}; */
-
-	/* int r[] = {1,0,0,1}; */
-	/* int g[] = {1,0,0,0}; */
-	/* int b[] = {1,1,0,1}; */
-
-	/* int r[] = {255,255,135,0  ,0  }; */
-	/* int g[] = {255,204,31 ,0  ,102}; */
-	/* int b[] = {255,0  ,19 ,153,255}; */
-
 	double w = surface->w;
 	double h = surface->h;
 
