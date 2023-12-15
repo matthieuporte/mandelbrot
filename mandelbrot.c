@@ -46,16 +46,16 @@ void mandelbrot(SDL_Surface* surface,point* coordinates,size_t n_coord,
 		double startReal,	double startIm, double zoom, int maxIt){
 	Uint32* pixels = (Uint32*)surface->pixels;
 
-	int sizePalette = 3;
-	int nbRepeat = 1;
+	int sizePalette = 6;
+	int nbRepeat = 4;
 
-	/* int r[] = {0,1,1,1,1,1}; */
-	/* int g[] = {0,0,1,1,1,0}; */
-	/* int b[] = {0,0,0,1,0,0}; */
+	int r[] = {0,1,1,1,1,1};
+	int g[] = {0,0,1,1,1,0};
+	int b[] = {0,0,0,1,0,0};
 
-	int r[] = {0,0,1};
-	int g[] = {0,0,1};
-	int b[] = {0,1,1};
+	/* int r[] = {0,0,1}; */
+	/* int g[] = {0,0,1}; */
+	/* int b[] = {0,1,1}; */
 
 	/* int r[] = {1,0,0,1}; */
 	/* int g[] = {1,0,0,0}; */
@@ -81,9 +81,11 @@ void mandelbrot(SDL_Surface* surface,point* coordinates,size_t n_coord,
 			if (n == -1)
 				pixels[i] = SDL_MapRGB(surface->format, 0, 0, 0);
 			else {
-				int bloc = maxIt/sizePalette/nbRepeat + 1;
+				int bloc = maxIt/(sizePalette*nbRepeat);
+				/* printf("bloc = %d\n",bloc); */
 				int dist = (n%bloc)*255/bloc;
-				int p1 = n/bloc;
+				/* printf("dist = %d\n",dist); */
+				int p1 = (n/bloc)%sizePalette;
 				int p2 = (p1 + 1)%sizePalette;
 				pixels[i] = SDL_MapRGB(surface->format, 
 						r[p2]*dist + r[p1]*(255 - dist),
