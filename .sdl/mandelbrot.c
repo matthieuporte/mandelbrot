@@ -48,7 +48,7 @@ void mandelbrot(SDL_Surface* surface,point* coordinates, palette pa,
 	Uint32* pixels = (Uint32*)surface->pixels;
 
 	int sizePalette = pa.n;
-	int nbRepeat = 3;
+	int nbRepeat = 2;
 
 	double w = surface->w;
 	double h = surface->h;
