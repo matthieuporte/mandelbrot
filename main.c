@@ -4,5 +4,5 @@
 int
 main (int argc, char **argv)
 {
-	return main(&argc, &argv);
+	return gui_run(&argc, &argv);
 }
