@@ -26,9 +26,14 @@ palette parse(char* filename){
     size_t len = 0;
     ssize_t read;
 
+    if ((read = getline(&line, &len, fptr)) != -1 || strlen(line) == 0){
+        errx(EXIT_FAILURE, "No title in palette");
+    }
+
+    asprintf(p.title,"%s");
+
     while ((read = getline(&line, &len, fptr)) != -1){
         if (line[7] != '\n'){
-            printf("len is %zu :%c;\n",len,line[7]);
             errx(EXIT_FAILURE, "Malformated palette file (hex size)");
         }
         n++;
