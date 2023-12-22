@@ -7,7 +7,7 @@ CFLAGS = -g -lm -fsanitize=address -Wall -Wconversion -Wextra `pkg-config --cfla
 LDLIBS = `pkg-config --libs gtk+-3.0`
 
 
-OBJ = main.o ./src/glad.o
+OBJ = main.o
 DEP = ${OBJ:.o=.d}
 
 all: main
