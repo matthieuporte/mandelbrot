@@ -1,3 +1,5 @@
+
+#include "src/glad/glad.h"
 #include <gtk/gtk.h>
 
 // Signal handler for the "clicked" signal of the start button.
