@@ -99,6 +99,8 @@
         </child>
         <child>
           <object class="GtkDrawingArea" id="area">
+            <property name="width-request">600</property>
+            <property name="height-request">400</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
           </object>

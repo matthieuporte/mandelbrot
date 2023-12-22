@@ -33,11 +33,13 @@ int main (int argc, char *argv[])
     GtkMenuBar *menubar = GTK_MENU_BAR(gtk_builder_get_object(builder, "menubar"));
     GtkMenuItem *fileMenu = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_file"));
     GtkMenuItem *btn_new = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_new"));
+    GtkMenuItem *btn_quit = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_quit"));
     GtkMenu *submenu_file = GTK_MENU(gtk_builder_get_object(builder, "submenu_file"));
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 	g_signal_connect(area, "draw", G_CALLBACK(on_draw), NULL);
     g_signal_connect(G_OBJECT(btn_new), "activate", G_CALLBACK(hello), NULL);
+    g_signal_connect(G_OBJECT(btn_quit), "activate", G_CALLBACK(gtk_main_quit), NULL);
 
     gtk_widget_show_all(GTK_WIDGET(window));
 
