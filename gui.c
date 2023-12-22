@@ -15,7 +15,7 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 }
 
 // Main function.
-int main (int argc, char *argv[])
+int gui_run (int argc, char *argv[])
 {
     gtk_init(NULL, NULL);
 
