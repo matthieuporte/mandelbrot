@@ -10,7 +10,7 @@ main (int argc, char **argv)
 	// Initializing Application state
 	MandelbrotState* mandstate = malloc(sizeof(MandelbrotState));
 	mandstate->startReal = -2;
-	mandstate->startIm = 1.5;
+	mandstate->startIm = 1;
     mandstate->zoom = 3;
 	
 	AppSettings* appset = malloc(sizeof(AppSettings));

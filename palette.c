@@ -59,7 +59,7 @@ palette create_palette(size_t n, char* title ,int values[n]){
     if (n%3 != 0)
         err(1,"create_palette()");
     palette p;
-    p.n = n;
+    p.n = n/3;
     p.title = title;
     p.colors = malloc(n*sizeof(int));
     for (size_t i = 0; i < n; i++){
