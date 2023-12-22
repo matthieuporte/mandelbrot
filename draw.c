@@ -1,7 +1,14 @@
-
+#include <pthread.h>
 #include <gtk/gtk.h>
 #include "mandelbrot.h"
+#include <err.h>
 #include "struct.h"
+
+void *worker(void* arg){	
+	thread_data* d = (thread_data *)arg;
+    mandelbrot(d->cr,d->coordinates,d->size,d->os->state,d->os->settings,d->w,d->h);
+	return NULL;
+}
 
 void coorShuff (point* coord,int n){
 
@@ -26,8 +33,13 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
     int w = gtk_widget_get_allocated_width(widget);
     int h = gtk_widget_get_allocated_width(widget);
 
+    int nbStep = os->settings->nbStep;
+    int nbThreads = os->settings->nbThreads;
     int nbPix = w * h;
+
     point* coordinates = malloc(nbPix*sizeof(point));
+	int size = nbPix/(nbStep*nbThreads);
+	int remSize = nbPix%(nbStep*nbThreads);
 
 	for (int y = 0; y < h; y++){
 		for (int x = 0; x < w; x++){
@@ -39,9 +51,30 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 	}
 
 	coorShuff(coordinates,nbPix);
+	pthread_t thr[nbThreads];
+	thread_data data[nbThreads*nbStep];
 
-    mandelbrot(cr,coordinates,nbPix,state,settings,w,h);
-    cairo_fill(cr);
+	for (int i = 0; i< nbStep; i++){
+		for (int j = 0; j < nbThreads; j++){
+			int ind = i * nbThreads + j;
+			data[ind].cr = cr;
+			data[ind].coordinates = coordinates+(i*nbThreads+j)*size;
+			data[ind].os = os;
+			data[ind].size = (size_t)size;
+            data[ind].w = w;
+            data[ind].h = h;
+			if (i == nbStep - 1 && j == nbThreads - 1)
+				data[ind].size += (size_t)remSize;
+			int e = pthread_create(thr+j, NULL, worker, (void *)(data+ind));
+			if (e != 0)
+				errx(EXIT_FAILURE, "pthread_create()");
+		}
+		for (int j = 0; j < nbThreads; j++){
+			pthread_join(thr[j],NULL);
+		}	
+        cairo_fill(cr);
+	}
+
 
 	return FALSE;
 }

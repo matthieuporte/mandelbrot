@@ -1,4 +1,5 @@
 #pragma once
+#include <gtk/gtk.h>
 
 typedef struct point {
 	int x;
@@ -26,6 +27,8 @@ typedef struct AppSettings
     int nbRepeat;
     double scrollSpeed;
     int maxIt;
+    int nbStep;
+    int nbThreads;
 } AppSettings;
 
 typedef struct OverallState
@@ -33,3 +36,13 @@ typedef struct OverallState
     AppSettings* settings;
     MandelbrotState* state;
 } OverallState;
+
+
+typedef struct thread_data{
+	cairo_t* cr;
+    size_t size;
+    int w;
+    int h;
+	point* coordinates;
+    OverallState* os;
+}thread_data;
