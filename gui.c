@@ -9,6 +9,7 @@ void hello(GtkMenuItem *item, gpointer user_data)
 // Signal handler for the "draw" signal of the drawing area.
 gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
+
 	return FALSE;
 }
 
