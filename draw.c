@@ -32,6 +32,8 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
     AppSettings* settings = os->settings;
     int w = gtk_widget_get_allocated_width(widget);
     int h = gtk_widget_get_allocated_width(widget);
+    state->w = w;
+    state->h = h;
 
     int nbStep = os->settings->nbStep;
     int nbThreads = os->settings->nbThreads;
@@ -61,8 +63,6 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 			data[ind].coordinates = coordinates+(i*nbThreads+j)*size;
 			data[ind].os = os;
 			data[ind].size = (size_t)size;
-            data[ind].w = w;
-            data[ind].h = h;
 			if (i == nbStep - 1 && j == nbThreads - 1)
 				data[ind].size += (size_t)remSize;
 			int e = pthread_create(thr+j, NULL, worker, (void *)(data+ind));

@@ -17,6 +17,9 @@ typedef struct MandelbrotState
     double startReal;
     double startIm;
     double zoom;
+    int* pixBuf;
+    int w;
+    int h;
 } MandelbrotState;
 
 typedef struct AppSettings 
@@ -41,8 +44,6 @@ typedef struct OverallState
 typedef struct thread_data{
 	cairo_t* cr;
     size_t size;
-    int w;
-    int h;
 	point* coordinates;
     OverallState* os;
 }thread_data;
