@@ -21,6 +21,7 @@ typedef struct MandelbrotState
 typedef struct AppSettings 
 {
 	int unsaved_changes;
+    palette* palette_list;
     palette pa;
     int nbRepeat;
     double scrollSpeed;

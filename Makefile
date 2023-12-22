@@ -7,7 +7,7 @@ CFLAGS = -g -lm -fsanitize=address -Wall -Wconversion -Wextra `pkg-config --cfla
 LDLIBS = `pkg-config --libs gtk+-3.0` -lm
 
 
-OBJ = main.o gui.o draw.o mandelbrot.o
+OBJ = main.o gui.o draw.o mandelbrot.o palette.o
 DEP = ${OBJ:.o=.d}
 
 all: main

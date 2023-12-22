@@ -2,6 +2,7 @@
 #include "mandelbrot.h"
 #include "draw.h"
 #include "struct.h"
+#include "palette.h"
 
 // Signal handler for the "clicked" signal of the start button.
 void hello(GtkMenuItem *item, gpointer user_data)
@@ -18,15 +19,17 @@ gboolean on_quit(GtkMenuItem* item, gpointer user_data)
 	if (os->settings->unsaved_changes == 1)
 	{
 		g_print("MANDELBROT_WARNING: the current file has unsaved changes\n");
-		gtk_widget_show_all(GTK_WIDGET(os->windows[1]));
+		/* gtk_widget_show_all(GTK_WIDGET(os->windows[1])); */
 	}
 	else
 		gtk_main_quit();
+
+    return TRUE;
 }
 
 
 // Main function.
-int gui_run (int* argc, char** argv[])
+int gui_run (int* argc, char** argv[], OverallState* os)
 {
     gtk_init(NULL, NULL);
 
@@ -44,42 +47,26 @@ int gui_run (int* argc, char** argv[])
     GtkDrawingArea* area = GTK_DRAWING_AREA(gtk_builder_get_object(builder, "area"));
     GtkWindow* main_window = GTK_WINDOW(gtk_builder_get_object(builder, "org.gtk.mandelbrot"));
 
-    GtkMenuBar *menubar = GTK_MENU_BAR(gtk_builder_get_object(builder, "menubar"));
-    GtkMenuItem *fileMenu = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_file"));
+    /* GtkMenuBar *menubar = GTK_MENU_BAR(gtk_builder_get_object(builder, "menubar")); */
+    /* GtkMenuItem *fileMenu = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_file")); */
     GtkMenuItem *btn_file_new = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_new"));
     GtkMenuItem *btn_file_quit = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_quit"));
-    GtkMenu *submenu_file = GTK_MENU(gtk_builder_get_object(builder, "submenu_file"));
+    /* GtkMenu *submenu_file = GTK_MENU(gtk_builder_get_object(builder, "submenu_file")); */
 
 	// Creating GTK Widgets for window : UNSAVED_CHANGES_POPUP
 	GtkWindow* unsaved_changes_popup_window = GTK_WINDOW(gtk_builder_get_object(builder, "org.gtk.unsaved_changes"));
 	GtkButton* unsaved_changes_quit = GTK_BUTTON(gtk_builder_get_object(builder, "unsaved_changes_quit"));
 	GtkButton* unsaved_changes_save = GTK_BUTTON(gtk_builder_get_object(builder, "unsaved_changes_save"));
 
-	// Initializing Application state
-	MandelbrotState* mandstate = malloc(sizeof(MandelbrotState));
-	mandstate->startReal = -2;
-	mandstate->startIm = 1.5;
-    mandstate->zoom = 3;
 	
-	AppSettings* appset = malloc(sizeof(AppSettings));
-	appset->unsaved_changes = 1;
-    /* appset->pa = NULL; */
-    appset->nbRepeat = 1;
-    appset->scrollSpeed = 1.5;
-    appset->maxIt = 100;
+	
+	/* GtkWindow** windows = malloc(sizeof(GtkWindow*)*2); // Stores references to all the app's windows; */
+	/* windows = { */
+	/* 	main_window, */ 
+	/* 	unsaved_changes_popup_window, */
+	/* }; */
 
-    OverallState* os = malloc(sizeof(OverallState));
-    os->state = mandstate;
-    os->settings = appset;
-	
-	
-	GtkWindow** windows = malloc(sizeof(GtkWindow*)*2); // Stores references to all the app's windows;
-	windows = {
-		main_window, 
-		unsaved_changes_popup_window,
-	};
-
-	os->windows = windows;
+	/* os->windows = windows; */
 
 	// Connecting signal handlers
     g_signal_connect(main_window, "destroy", G_CALLBACK(on_quit), NULL);
