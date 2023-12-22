@@ -23,7 +23,7 @@ int main (int argc, char *argv[])
         return 1;
     }
 
-    GtkGLArea* area = GTK_GL_AREA(gtk_builder_get_object(builder, "area"));
+    GtkDrawingArea* area = GTK_DRAWING_AREA(gtk_builder_get_object(builder, "area"));
     GtkWindow* window = GTK_WINDOW(gtk_builder_get_object(builder, "org.gtk.mandelbrot"));
 
     GtkMenuBar *menubar = GTK_MENU_BAR(gtk_builder_get_object(builder, "menubar"));
@@ -32,7 +32,7 @@ int main (int argc, char *argv[])
     GtkMenu *submenu_file = GTK_MENU(gtk_builder_get_object(builder, "submenu_file"));
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-
+	g_signal_connect(area, "draw", G_CALLBACK(on_draw), NULL);
     g_signal_connect(G_OBJECT(btn_new), "activate", G_CALLBACK(hello), NULL);
 
     gtk_widget_show_all(GTK_WIDGET(window));
