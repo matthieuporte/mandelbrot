@@ -2,7 +2,7 @@
 #include <err.h>
 #include <math.h>
 #include <gtk/gtk.h>
-#include "mandelbrot.h"
+#include "struct.h"
 
 // a^2 - b^2 + 2abi
 void complexSquared(double* real, double* im){
@@ -41,37 +41,39 @@ int optim1(double x, double y){
 
 
 void mandelbrot(cairo_t* cr,point* coordinates, palette pa, size_t n_coord,
-        double startReal,double startIm, double zoom, int maxIt, int w, int h){
+        MandelbrotState* state, AppSettings* settings int w, int h){
 
-	int sizePalette = pa.n;
-	int nbRepeat = 2;
+	int sizePalette = settings->pa.n;
+	int nbRepeat = settings->nbRepeat;
 
-	double nudge_x = zoom/w;
-	double nudge_y = zoom/h;
+	double nudge_x = state->zoom/w;
+	double nudge_y = state->zoom/h;
 
 	for (size_t p = 0; p < n_coord; p++){
 		int y = coordinates[p].y;
 		int x = coordinates[p].x;
 		int i = (int)y * (int)w + (int)x;
-		double real = startReal + x*nudge_x;
-		double im = startIm - y*nudge_y;
+		double real = state->startReal + x*nudge_x;
+		double im = state->startIm - y*nudge_y;
 		if (optim1(real,im)){
-			pixels[i] = SDL_MapRGB(surface->format, 0, 0, 0);
+            cairo_set_source_rgb(cr,0,0,0);
 		} else {
-			int n = divergence(real,im,maxIt);
+			int n = divergence(real,im,settings->maxIt);
 			if (n == -1)
-				pixels[i] = SDL_MapRGB(surface->format, 0, 0, 0);
+                cairo_set_source_rgb(cr,0,0,0);
 			else {
-				int bloc = maxIt/(sizePalette*nbRepeat);
-				int dist = (n%bloc)*255/bloc;
-				int p1 = (n/bloc)%sizePalette;
-				int p2 = (p1 + 1)%sizePalette;
-				pixels[i] = SDL_MapRGB(surface->format,
-					(pa.colors[p2*3]*dist + pa.colors[p1*3]*(255 - dist))/255,
-					(pa.colors[p2*3+1]*dist + pa.colors[p1*3+1]*(255 - dist))/255,
-					(pa.colors[p2*3+2]*dist + pa.colors[p1*3+2]*(255 - dist))/255);
+                cairo_set_source_rgb(cr,1,1,1);
+				/* int bloc = maxIt/(sizePalette*nbRepeat); */
+				/* int dist = (n%bloc)*255/bloc; */
+				/* int p1 = (n/bloc)%sizePalette; */
+				/* int p2 = (p1 + 1)%sizePalette; */
+				/* pixels[i] = SDL_MapRGB(surface->format, */
+				/* 	(pa.colors[p2*3]*dist + pa.colors[p1*3]*(255 - dist))/255, */
+				/* 	(pa.colors[p2*3+1]*dist + pa.colors[p1*3+1]*(255 - dist))/255, */
+				/* 	(pa.colors[p2*3+2]*dist + pa.colors[p1*3+2]*(255 - dist))/255); */
 			}
 		}
+        cairo_rectangle(cr,x,y,1,1);
 	}
 
 }
