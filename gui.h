@@ -1,4 +1,1 @@
-#include <stdbool.h>
-
-bool gui_init (int *argc, char ***argv);
-bool gui_run (void);
+int gui_run (int *argc, char ***argv);
