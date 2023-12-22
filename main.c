@@ -1,11 +1,15 @@
-
-#include "src/glad/glad.h"
 #include <gtk/gtk.h>
 
 // Signal handler for the "clicked" signal of the start button.
 void hello(GtkMenuItem *item, gpointer user_data)
 {
     g_print("Hello World\n");
+}
+
+// Signal handler for the "draw" signal of the drawing area.
+gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
+{
+	return FALSE;
 }
 
 // Main function.
