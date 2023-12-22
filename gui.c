@@ -3,12 +3,17 @@
 
 struct MandelbrotState 
 {
-	int x, y;
+    double startReal;
+    double startIm;
+    double zoom;
+    int maxIt;
 };
 
 struct AppSettings 
 {
 	int unsaved_changes;
+    palette pa;
+    double scrollSpeed;
 };
 
 
