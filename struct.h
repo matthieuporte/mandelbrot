@@ -7,7 +7,8 @@ typedef struct point {
 
 typedef struct palette {
 	int n;
-	int* colors;
+    char* title;
+	int* colors; // r1 ; g1 ; b1 ; ... ; rn ; gn ; bn 
 }palette;
 
 typedef struct MandelbrotState 
