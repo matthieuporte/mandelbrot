@@ -1,9 +1,7 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_timer.h>
 #include <stdio.h>
 #include <err.h>
 #include <math.h>
+#include <gtk/gtk.h>
 #include "mandelbrot.h"
 
 // a^2 - b^2 + 2abi
@@ -42,7 +40,7 @@ int optim1(double x, double y){
 }
 
 
-void mandelbrot(SDL_Surface* surface,point* coordinates, palette pa, 
+void mandelbrot(cairo_t* cr,point* coordinates, palette pa, 
 	size_t n_coord,	double startReal,double startIm, double zoom, int maxIt){
 
 	Uint32* pixels = (Uint32*)surface->pixels;
