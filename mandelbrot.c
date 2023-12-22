@@ -40,7 +40,7 @@ int optim1(double x, double y){
 }
 
 
-void mandelbrot(cairo_t* cr,point* coordinates, size_t n_coord,
+void mandelbrot(cairo_t* cr,point* coordinates, int n_coord,
         MandelbrotState* state, AppSettings* settings, int w, int h){
 
 	int sizePalette = settings->pa.n;
@@ -73,7 +73,8 @@ void mandelbrot(cairo_t* cr,point* coordinates, size_t n_coord,
 				/* 	(pa.colors[p2*3+2]*dist + pa.colors[p1*3+2]*(255 - dist))/255); */
 			}
 		}
-        cairo_rectangle(cr,x,y,1,1);
+        cairo_rectangle(cr,x,y,1.5,1.5);
+        cairo_fill(cr);
 	}
 
 }

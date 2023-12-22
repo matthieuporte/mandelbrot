@@ -1,6 +1,7 @@
+
+#include <gtk/gtk.h>
 #include "mandelbrot.h"
 #include "struct.h"
-#include <gtk/gtk.h>
 
 void coorShuff (point coord[],int n){
 
@@ -26,7 +27,7 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
     int h = gtk_widget_get_allocated_width(widget);
 
     int nbPix = w * h;
-    point coord[nbPix];
+    point coordinates[nbPix];
 
 	for (int y = 0; y < h; y++){
 		for (int x = 0; x < w; x++){
@@ -39,7 +40,7 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
 	coorShuff(coordinates,nbPix);
 
-    mandelbrot(cr,coords,state,settings,w,h);
+    mandelbrot(cr,coordinates,nbPix,state,settings,w,h);
     cairo_fill(cr);
 
 	return FALSE;

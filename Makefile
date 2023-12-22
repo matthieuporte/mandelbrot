@@ -1,13 +1,13 @@
 # Makefile
 
 # Flags for implicit rules
-CC = gcc -fsanitize=address
+CC = gcc -fsanitize=address -lm
 CPPFLAGS = -MMD
 CFLAGS = -g -lm -fsanitize=address -Wall -Wconversion -Wextra `pkg-config --cflags gtk+-3.0`
-LDLIBS = `pkg-config --libs gtk+-3.0`
+LDLIBS = `pkg-config --libs gtk+-3.0` -lm
 
 
-OBJ = main.o gui.o
+OBJ = main.o gui.o draw.o mandelbrot.o
 DEP = ${OBJ:.o=.d}
 
 all: main

@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 #include "mandelbrot.h"
 #include "draw.h"
+#include "struct.h"
 
 // Signal handler for the "clicked" signal of the start button.
 void hello(GtkMenuItem *item, gpointer user_data)
@@ -12,7 +13,7 @@ void hello(GtkMenuItem *item, gpointer user_data)
 // Signal handler for any action that would close the program.
 gboolean on_quit(GtkMenuItem* item, gpointer user_data)
 {
-	struct AppSettings* appset = userdata;
+	AppSettings* appset = user_data;
 
 	if (appset->unsaved_changes)
 		g_print("You have unsaved changes");
@@ -59,7 +60,7 @@ int gui_run (int* argc, char** argv[])
 
     OverallState* os = malloc(sizeof(OverallState));
     os->state = mandstate;
-    os->settings = settings;
+    os->settings = appset;
 
 	// Connecting signal handlers
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);

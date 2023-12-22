@@ -1,3 +1,4 @@
+#pragma once
 
 typedef struct point {
 	int x;
@@ -29,4 +30,4 @@ typedef struct OverallState
 {
     AppSettings* settings;
     MandelbrotState* state;
-}
+} OverallState;
