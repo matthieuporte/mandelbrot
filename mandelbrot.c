@@ -40,20 +40,14 @@ int optim1(double x, double y){
 }
 
 
-void mandelbrot(cairo_t* cr,point* coordinates, palette pa, 
-	size_t n_coord,	double startReal,double startIm, double zoom, int maxIt){
-
-	Uint32* pixels = (Uint32*)surface->pixels;
+void mandelbrot(cairo_t* cr,point* coordinates, palette pa, size_t n_coord,
+        double startReal,double startIm, double zoom, int maxIt, int w, int h){
 
 	int sizePalette = pa.n;
 	int nbRepeat = 2;
 
-	double w = surface->w;
-	double h = surface->h;
-
 	double nudge_x = zoom/w;
 	double nudge_y = zoom/h;
-
 
 	for (size_t p = 0; p < n_coord; p++){
 		int y = coordinates[p].y;
