@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include "mandelbrot.h"
 
 // Signal handler for the "clicked" signal of the start button.
 void hello(GtkMenuItem *item, gpointer user_data)
