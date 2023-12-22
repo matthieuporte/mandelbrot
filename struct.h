@@ -22,7 +22,7 @@ typedef struct AppSettings
 {
 	int unsaved_changes;
     palette* palette_list;
-    palette pa;
+    palette palette;
     int nbRepeat;
     double scrollSpeed;
     int maxIt;

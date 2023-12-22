@@ -30,7 +30,7 @@ palette parse(char* filename){
         errx(EXIT_FAILURE, "No title in palette");
     }
 
-    asprintf(p.title,"%s");
+    asprintf(&p.title,"%s",line);
 
     while ((read = getline(&line, &len, fptr)) != -1){
         if (line[7] != '\n'){
@@ -55,7 +55,7 @@ palette parse(char* filename){
 
 }
 
-palette create_palette(size_t n, char* title ,double values[n]){
+palette create_palette(size_t n, char* title ,int values[n]){
     if (n%3 != 0)
         err(1,"create_palette()");
     palette p;
@@ -71,7 +71,7 @@ palette create_palette(size_t n, char* title ,double values[n]){
 palette* load_palettes(){
     palette* l = malloc(1*sizeof(palette));
 
-    double blue[6] = {0,0,20,255,255,255};
+    int blue[6] = {0,0,20,255,255,255};
     l[0] = create_palette(6,"blue",blue);
 
     return l;

@@ -43,16 +43,17 @@ int optim1(double x, double y){
 void mandelbrot(cairo_t* cr,point* coordinates, int n_coord,
         MandelbrotState* state, AppSettings* settings, int w, int h){
 
-	int sizePalette = settings->pa.n;
+    palette pa = settings->palette;
+	int sizePalette = pa.n;
 	int nbRepeat = settings->nbRepeat;
+    int maxIt = settings->maxIt;
 
 	double nudge_x = state->zoom/w;
 	double nudge_y = state->zoom/h;
 
-	for (size_t p = 0; p < n_coord; p++){
+	for (int p = 0; p < n_coord; p++){
 		int y = coordinates[p].y;
 		int x = coordinates[p].x;
-		int i = (int)y * (int)w + (int)x;
 		double real = state->startReal + x*nudge_x;
 		double im = state->startIm - y*nudge_y;
 		if (optim1(real,im)){
@@ -62,15 +63,14 @@ void mandelbrot(cairo_t* cr,point* coordinates, int n_coord,
 			if (n == -1)
                 cairo_set_source_rgb(cr,0,0,0);
 			else {
-                cairo_set_source_rgb(cr,1,1,1);
-				/* int bloc = maxIt/(sizePalette*nbRepeat); */
-				/* int dist = (n%bloc)*255/bloc; */
-				/* int p1 = (n/bloc)%sizePalette; */
-				/* int p2 = (p1 + 1)%sizePalette; */
-				/* pixels[i] = SDL_MapRGB(surface->format, */
-				/* 	(pa.colors[p2*3]*dist + pa.colors[p1*3]*(255 - dist))/255, */
-				/* 	(pa.colors[p2*3+1]*dist + pa.colors[p1*3+1]*(255 - dist))/255, */
-				/* 	(pa.colors[p2*3+2]*dist + pa.colors[p1*3+2]*(255 - dist))/255); */
+				int bloc = maxIt/(sizePalette*nbRepeat);
+				int dist = (n%bloc)*255/bloc;
+				int p1 = (n/bloc)%sizePalette;
+				int p2 = (p1 + 1)%sizePalette;
+                double r = (double)(pa.colors[p2*3+0]*dist + pa.colors[p1*3+0]*(255 - dist))/255/255;
+                double g = (double)(pa.colors[p2*3+1]*dist + pa.colors[p1*3+1]*(255 - dist))/255/255;
+                double b = (double)(pa.colors[p2*3+2]*dist + pa.colors[p1*3+2]*(255 - dist))/255/255;
+                cairo_set_source_rgb(cr,r,g,b);
 			}
 		}
         cairo_rectangle(cr,x,y,1,1);

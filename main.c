@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "palette.h"
 #include <stdlib.h>
 
 // Application entry point
@@ -14,8 +15,8 @@ main (int argc, char **argv)
 	
 	AppSettings* appset = malloc(sizeof(AppSettings));
 	appset->unsaved_changes = 1;
-    appset->palette_list = create_palette();
-    appset->pa = appset->palette_list[0];
+    appset->palette_list = load_palettes();
+    appset->palette = appset->palette_list[0];
     appset->nbRepeat = 1;
     appset->scrollSpeed = 1.5;
     appset->maxIt = 100;
