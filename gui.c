@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 #include "mandelbrot.h"
-
+#include "draw.h"
 
 // Signal handler for the "clicked" signal of the start button.
 void hello(GtkMenuItem *item, gpointer user_data)
@@ -18,19 +18,6 @@ gboolean on_quit(GtkMenuItem* item, gpointer user_data)
 		g_print("You have unsaved changes");
 }
 
-// Signal handler for the "draw" signal of the drawing area.
-gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
-{
-    g_print("on draw()\n");
-
-    int w = gtk_widget_get_allocated_width(widget);
-    int h = gtk_widget_get_allocated_width(widget);
-
-    mandelbrot(cr,coords,pa,n_coord,state,w,h);
-    cairo_fill(cr);
-
-	return FALSE;
-}
 
 // Main function.
 int gui_run (int* argc, char** argv[])
@@ -58,16 +45,25 @@ int gui_run (int* argc, char** argv[])
     GtkMenu *submenu_file = GTK_MENU(gtk_builder_get_object(builder, "submenu_file"));
 
 	// Initializing Application state
-	struct MandelbrotState* mandstate = malloc(sizeof(struct MandelbrotState));
-	mandstate->x = 0;
-	mandstate->x = 0;
+	MandelbrotState* mandstate = malloc(sizeof(MandelbrotState));
+	mandstate->startReal = -2;
+	mandstate->startIm = 1.5;
+    mandstate->zoom = 3;
 	
-	struct AppSettings* appset = malloc(sizeof(struct AppSettings));
+	AppSettings* appset = malloc(sizeof(AppSettings));
 	appset->unsaved_changes = 0;
+    /* appset->pa = NULL; */
+    appset->nbRepeat = 1;
+    appset->scrollSpeed = 1.5;
+    appset->maxIt = 100;
+
+    OverallState* os = malloc(sizeof(OverallState));
+    os->state = mandstate;
+    os->settings = settings;
 
 	// Connecting signal handlers
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-	g_signal_connect(area, "draw", G_CALLBACK(on_draw), NULL);
+	g_signal_connect(area, "draw", G_CALLBACK(on_draw), os);
     g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(hello), NULL);
     g_signal_connect(G_OBJECT(btn_file_quit), "activate", G_CALLBACK(gtk_main_quit), NULL);
 

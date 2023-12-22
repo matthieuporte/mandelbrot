@@ -14,7 +14,6 @@ typedef struct MandelbrotState
     double startReal;
     double startIm;
     double zoom;
-    int maxIt;
 } MandelbrotState;
 
 typedef struct AppSettings 
@@ -23,4 +22,11 @@ typedef struct AppSettings
     palette pa;
     int nbRepeat;
     double scrollSpeed;
+    int maxIt;
 } AppSettings;
+
+typedef struct OverallState
+{
+    AppSettings* settings;
+    MandelbrotState* state;
+}

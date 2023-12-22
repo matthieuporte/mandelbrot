@@ -40,8 +40,8 @@ int optim1(double x, double y){
 }
 
 
-void mandelbrot(cairo_t* cr,point* coordinates, palette pa, size_t n_coord,
-        MandelbrotState* state, AppSettings* settings int w, int h){
+void mandelbrot(cairo_t* cr,point* coordinates, size_t n_coord,
+        MandelbrotState* state, AppSettings* settings, int w, int h){
 
 	int sizePalette = settings->pa.n;
 	int nbRepeat = settings->nbRepeat;

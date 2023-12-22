@@ -1,3 +1,5 @@
+#include <gtk/gtk.h>
+#include "struct.h"
 
-void mandelbrot(SDL_Surface* surface, point* co, palette pa,
-		size_t n, double a, double b, double c,int d);
+void mandelbrot(cairo_t* cr, point* co, size_t a, MandelbrotState* b,
+        AppSettings* c, int w, int h);
