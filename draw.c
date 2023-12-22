@@ -3,7 +3,7 @@
 #include "mandelbrot.h"
 #include "struct.h"
 
-void coorShuff (point coord[],int n){
+void coorShuff (point* coord,int n){
 
 	srand((unsigned int)time(NULL));
 
@@ -27,7 +27,7 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
     int h = gtk_widget_get_allocated_width(widget);
 
     int nbPix = w * h;
-    point coordinates[nbPix];
+    point* coordinates = malloc(nbPix*sizeof(point));
 
 	for (int y = 0; y < h; y++){
 		for (int x = 0; x < w; x++){

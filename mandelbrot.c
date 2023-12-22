@@ -73,7 +73,7 @@ void mandelbrot(cairo_t* cr,point* coordinates, int n_coord,
 				/* 	(pa.colors[p2*3+2]*dist + pa.colors[p1*3+2]*(255 - dist))/255); */
 			}
 		}
-        cairo_rectangle(cr,x,y,1.5,1.5);
+        cairo_rectangle(cr,x,y,1,1);
         cairo_fill(cr);
 	}
 
