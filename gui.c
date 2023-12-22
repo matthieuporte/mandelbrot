@@ -1,21 +1,6 @@
 #include <gtk/gtk.h>
 #include "mandelbrot.h"
 
-struct MandelbrotState 
-{
-    double startReal;
-    double startIm;
-    double zoom;
-    int maxIt;
-};
-
-struct AppSettings 
-{
-	int unsaved_changes;
-    palette pa;
-    double scrollSpeed;
-};
-
 
 // Signal handler for the "clicked" signal of the start button.
 void hello(GtkMenuItem *item, gpointer user_data)
