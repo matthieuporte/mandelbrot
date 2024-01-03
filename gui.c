@@ -16,11 +16,17 @@ gboolean coordinates(GtkWidget *widget,GdkEventButton *event, gpointer user_data
         OverallState* os = user_data;
 
         // Coordinates of the click
-
-        os->state->startReal += event->x/os->state->w*os->state->scroll;
-        os->state->startIm -= event->y/os->state->h*os->state->scroll;
-        os->state->zoom -= os->state->scroll;
-        os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
+        if (event->button == 1){
+            os->state->startReal += event->x/os->state->w*os->state->scroll;
+            os->state->startIm -= event->y/os->state->h*os->state->scroll;
+            os->state->zoom -= os->state->scroll;
+            os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
+        } else if (event->button == 3){
+            os->state->startReal -= event->x/os->state->w*os->state->scroll;
+            os->state->startIm += event->y/os->state->h*os->state->scroll;
+            os->state->zoom += os->state->scroll;
+            os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
+        }
         g_print("Button pressed at coordinates (%f, %f)\n", event->x, event->y);
         
         gtk_widget_queue_draw(widget);
