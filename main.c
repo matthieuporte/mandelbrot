@@ -12,6 +12,7 @@ main (int argc, char **argv)
 	mandstate->startReal = -2;
 	mandstate->startIm = 1;
     mandstate->zoom = 3;
+    mandstate->scroll = 2;
 	
 	AppSettings* appset = malloc(sizeof(AppSettings));
 	appset->unsaved_changes = 1;
@@ -21,7 +22,7 @@ main (int argc, char **argv)
     appset->scrollSpeed = 1.5;
     appset->maxIt = 100;
     appset->nbStep = 10;
-    appset->nbThreads = 16;
+    appset->nbThreads = 1;
 
     OverallState* os = malloc(sizeof(OverallState));
     os->state = mandstate;

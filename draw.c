@@ -6,7 +6,7 @@
 
 void *worker(void* arg){	
 	thread_data* d = (thread_data *)arg;
-    mandelbrot(d->cr,d->coordinates,d->size,d->os->state,d->os->settings,d->w,d->h);
+    mandelbrot(d->cr,d->coordinates,d->size,d->os->state,d->os->settings);
 	return NULL;
 }
 
@@ -25,7 +25,6 @@ void coorShuff (point* coord,int n){
 // Signal handler for the "draw" signal of the drawing area.
 gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
-    g_print("on draw()\n");
 
     OverallState* os = user_data;
     MandelbrotState* state = os->state;
@@ -34,6 +33,8 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
     int h = gtk_widget_get_allocated_width(widget);
     state->w = w;
     state->h = h;
+
+    g_print("w: %d | h: %d\n",w,h);
 
     int nbStep = os->settings->nbStep;
     int nbThreads = os->settings->nbThreads;

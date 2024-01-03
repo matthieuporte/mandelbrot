@@ -10,6 +10,24 @@ void hello(GtkMenuItem *item, gpointer user_data)
     g_print("Hello World\n");
 }
 
+gboolean coordinates(GtkWidget *widget,GdkEventButton *event, gpointer user_data)
+{
+    if (event->type == GDK_BUTTON_PRESS) {
+        OverallState* os = user_data;
+
+        // Coordinates of the click
+
+        os->state->startReal += event->x/os->state->w*os->state->scroll;
+        os->state->startIm -= event->y/os->state->h*os->state->scroll;
+        os->state->zoom -= os->state->scroll;
+        os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
+        g_print("Button pressed at coordinates (%f, %f)\n", event->x, event->y);
+        
+        gtk_widget_queue_draw(widget);
+
+    }
+    return FALSE;
+}
 
 // Signal handler for any action that would close the program.
 gboolean on_quit(GtkMenuItem* item, gpointer user_data)
@@ -70,7 +88,10 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 
 	// Connecting signal handlers
     g_signal_connect(main_window, "destroy", G_CALLBACK(on_quit), NULL);
+    gtk_widget_add_events(GTK_WIDGET(area), GDK_BUTTON_PRESS_MASK);
+    g_signal_connect(area, "button_press_event", G_CALLBACK(coordinates), os);
 	g_signal_connect(area, "draw", G_CALLBACK(on_draw), os);
+    
     g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(hello), NULL);
     g_signal_connect(G_OBJECT(btn_file_quit), "activate", G_CALLBACK(on_quit), os);
 

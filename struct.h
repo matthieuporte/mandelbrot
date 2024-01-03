@@ -17,6 +17,7 @@ typedef struct MandelbrotState
     double startReal;
     double startIm;
     double zoom;
+    double scroll;
     int* pixBuf;
     int w;
     int h;

@@ -41,12 +41,15 @@ int optim1(double x, double y){
 
 
 void mandelbrot(cairo_t* cr,point* coordinates, int n_coord,
-        MandelbrotState* state, AppSettings* settings, int w, int h){
+        MandelbrotState* state, AppSettings* settings){
 
     palette pa = settings->palette;
 	int sizePalette = pa.n;
 	int nbRepeat = settings->nbRepeat;
     int maxIt = settings->maxIt;
+
+    int w = state->w;
+    int h = state->h;
 
 	double nudge_x = state->zoom/w;
 	double nudge_y = state->zoom/h;
