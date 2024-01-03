@@ -21,7 +21,6 @@ main (int argc, char **argv)
     appset->nbRepeat = 1;
     appset->scrollSpeed = 1.5;
     appset->maxIt = 100;
-    appset->nbStep = 10;
     appset->nbThreads = 1;
 
     OverallState* os = malloc(sizeof(OverallState));

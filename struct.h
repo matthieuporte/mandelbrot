@@ -31,7 +31,6 @@ typedef struct AppSettings
     int nbRepeat;
     double scrollSpeed;
     int maxIt;
-    int nbStep;
     int nbThreads;
 } AppSettings;
 

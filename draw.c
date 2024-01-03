@@ -28,21 +28,18 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
     OverallState* os = user_data;
     MandelbrotState* state = os->state;
-    AppSettings* settings = os->settings;
     int w = gtk_widget_get_allocated_width(widget);
     int h = gtk_widget_get_allocated_width(widget);
     state->w = w;
     state->h = h;
 
-    g_print("w: %d | h: %d\n",w,h);
 
-    int nbStep = os->settings->nbStep;
     int nbThreads = os->settings->nbThreads;
     int nbPix = w * h;
 
     point* coordinates = malloc(nbPix*sizeof(point));
-	int size = nbPix/(nbStep*nbThreads);
-	int remSize = nbPix%(nbStep*nbThreads);
+	int size = nbPix/nbThreads;
+	int remSize = nbPix%nbThreads;
 
 	for (int y = 0; y < h; y++){
 		for (int x = 0; x < w; x++){
@@ -55,26 +52,25 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
 	coorShuff(coordinates,nbPix);
 	pthread_t thr[nbThreads];
-	thread_data data[nbThreads*nbStep];
+	thread_data data[nbThreads];
 
-	for (int i = 0; i< nbStep; i++){
-		for (int j = 0; j < nbThreads; j++){
-			int ind = i * nbThreads + j;
-			data[ind].cr = cr;
-			data[ind].coordinates = coordinates+(i*nbThreads+j)*size;
-			data[ind].os = os;
-			data[ind].size = (size_t)size;
-			if (i == nbStep - 1 && j == nbThreads - 1)
-				data[ind].size += (size_t)remSize;
-			int e = pthread_create(thr+j, NULL, worker, (void *)(data+ind));
-			if (e != 0)
-				errx(EXIT_FAILURE, "pthread_create()");
-		}
-		for (int j = 0; j < nbThreads; j++){
-			pthread_join(thr[j],NULL);
-		}	
-        cairo_fill(cr);
-	}
+    for (int j = 0; j < nbThreads; j++){
+        data[j].cr = cr;
+        data[j].coordinates = coordinates+j*size;
+        data[j].os = os;
+        data[j].size = (size_t)size;
+        if (j == nbThreads - 1)
+            data[j].size += (size_t)remSize;
+        int e = pthread_create(thr+j, NULL, worker, (void *)(data+j));
+        if (e != 0)
+            errx(EXIT_FAILURE, "pthread_create()");
+        g_print("%d\n",j);
+    }
+    for (int j = 0; j < nbThreads; j++){
+        g_print("%d\n",j);
+        pthread_join(thr[j],NULL);
+    }	
+    cairo_fill(cr);
 
 
 	return FALSE;
