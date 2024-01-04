@@ -30,7 +30,9 @@ gboolean coordinates(GtkWidget *widget,GdkEventButton *event, gpointer user_data
         }
         g_print("Button pressed at coordinates (%f, %f)\n", event->x, event->y);
         
-        g_idle_add(render_step,os);
+        g_source_remove(os->renderInfo->id);
+        os->renderInfo->init_done = FALSE;
+        os->renderInfo->id = g_idle_add(render_step,os);
         gtk_widget_queue_draw(widget);
 
     }
@@ -39,7 +41,9 @@ gboolean coordinates(GtkWidget *widget,GdkEventButton *event, gpointer user_data
 
 gboolean on_resize(GtkWidget* widget,GdkEventConfigure *event, gpointer user_data){
     OverallState* os = user_data;
-    g_idle_add(render_step,os);
+    g_source_remove(os->renderInfo->id);
+    os->renderInfo->init_done = FALSE;
+    os->renderInfo->id = g_idle_add(render_step,os);
     return FALSE;
 }
 

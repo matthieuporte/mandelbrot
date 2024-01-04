@@ -24,7 +24,6 @@ void coorShuff (point* coord,int n){
 
 gboolean initial_setup(OverallState* os)
 {
-    g_print("settuping\n");
     MandelbrotState* state = os->state;
 
     RenderInfo* ri = os->renderInfo;
@@ -77,8 +76,6 @@ gboolean render_step(gpointer user_data){
         ri->init_done = TRUE;
     }
 
-    g_print("curstep : %d\n",ri->curStep);
-
     if (ri->curStep >= os->settings->nbSteps){
         // Cleanup and return FALSE to stop the idle callback
         ri->init_done = FALSE;
@@ -118,7 +115,6 @@ gboolean render_step(gpointer user_data){
 }
 
 gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data){
-    g_print("ondraw()\n");
     OverallState* os = user_data;
 
     // Draw the current state of the Pixbuf on the drawing area

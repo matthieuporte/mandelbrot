@@ -40,6 +40,7 @@ typedef struct AppSettings
 typedef struct RenderInfo
 {
     gboolean init_done;
+    guint id;
     point* coordinates;
     int curStep;
     int size;

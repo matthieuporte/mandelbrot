@@ -31,6 +31,7 @@ main (int argc, char **argv)
     ri->curStep = 0;
     ri->size = 0;
     ri->remSize = 0;
+    ri->id = 0;
 
     OverallState* os = malloc(sizeof(OverallState));
     os->state = mandstate;
