@@ -6,7 +6,7 @@
 
 void *worker(void* arg){	
 	thread_data* d = (thread_data *)arg;
-    mandelbrot(d->cr,d->coordinates,d->size,d->os->state,d->os->settings);
+    mandelbrot(d->pix,d->coordinates,d->size,d->os);
 	return NULL;
 }
 
@@ -28,13 +28,16 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
     OverallState* os = user_data;
     MandelbrotState* state = os->state;
-    int w = gtk_widget_get_allocated_width(widget);
-    int h = gtk_widget_get_allocated_width(widget);
+    GdkPixbuf* pixbuf = state->colorBuf;
+    /* int w = gtk_widget_get_allocated_width(widget); */
+    /* int h = gtk_widget_get_allocated_width(widget); */
+    int w = gdk_pixbuf_get_width(pixbuf);
+    int h = gdk_pixbuf_get_height(pixbuf);
     state->w = w;
     state->h = h;
 
 
-    int nbThreads = os->settings->nbThreads;
+    int nbThreads = 16;//os->settings->nbThreads;
     int nbPix = w * h;
 
     point* coordinates = malloc(nbPix*sizeof(point));
@@ -50,28 +53,37 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		}
 	}
 
+    guchar *pixels = gdk_pixbuf_get_pixels(pixbuf);
+
+    // Example: Manipulate pixel data (e.g., invert colors)
+    /* for (int i = 0; i < w * h * 3; i++) { */
+    /*     pixels[i] = 255 - pixels[i]; */
+    /* } */
+
+
 	coorShuff(coordinates,nbPix);
-	pthread_t thr[nbThreads];
+	GThread* thr[nbThreads];
 	thread_data data[nbThreads];
 
     for (int j = 0; j < nbThreads; j++){
-        data[j].cr = cr;
+        data[j].pix = pixels;
         data[j].coordinates = coordinates+j*size;
         data[j].os = os;
         data[j].size = (size_t)size;
         if (j == nbThreads - 1)
             data[j].size += (size_t)remSize;
-        int e = pthread_create(thr+j, NULL, worker, (void *)(data+j));
-        if (e != 0)
-            errx(EXIT_FAILURE, "pthread_create()");
-        g_print("%d\n",j);
+        thr[j] = g_thread_new("mythread",worker,data+j);
     }
     for (int j = 0; j < nbThreads; j++){
-        g_print("%d\n",j);
-        pthread_join(thr[j],NULL);
-    }	
-    cairo_fill(cr);
+        g_thread_join(thr[j]);
+    }
+    /* cairo_fill(cr); */
+    GdkPixbuf *modifiedPixbuf = gdk_pixbuf_copy(pixbuf);
 
+    gdk_cairo_set_source_pixbuf(cr, modifiedPixbuf, 0, 0);
+    cairo_paint(cr);
+
+    g_object_unref(modifiedPixbuf);
 
 	return FALSE;
 }

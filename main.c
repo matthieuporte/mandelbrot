@@ -13,6 +13,8 @@ main (int argc, char **argv)
 	mandstate->startIm = 1;
     mandstate->zoom = 3;
     mandstate->scroll = 2;
+    /* mandstate->colorBuf = gdk_pixbuf_new_from_file("~/pictures/wallpapers/shrek.jpg", NULL); */
+    mandstate->colorBuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, 400, 400);
 	
 	AppSettings* appset = malloc(sizeof(AppSettings));
 	appset->unsaved_changes = 1;

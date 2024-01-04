@@ -19,6 +19,7 @@ typedef struct MandelbrotState
     double zoom;
     double scroll;
     int* pixBuf;
+    GdkPixbuf* colorBuf;
     int w;
     int h;
 } MandelbrotState;
@@ -42,7 +43,7 @@ typedef struct OverallState
 
 
 typedef struct thread_data{
-	cairo_t* cr;
+	guchar* pix;
     size_t size;
 	point* coordinates;
     OverallState* os;

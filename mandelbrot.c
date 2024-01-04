@@ -40,9 +40,10 @@ int optim1(double x, double y){
 }
 
 
-void mandelbrot(cairo_t* cr,point* coordinates, int n_coord,
-        MandelbrotState* state, AppSettings* settings){
+void mandelbrot(guchar* pix,point* coordinates, int n_coord, OverallState* os){
 
+    MandelbrotState* state = os->state;
+    AppSettings* settings = os->settings;
     palette pa = settings->palette;
 	int sizePalette = pa.n;
 	int nbRepeat = settings->nbRepeat;
@@ -60,24 +61,34 @@ void mandelbrot(cairo_t* cr,point* coordinates, int n_coord,
 		double real = state->startReal + x*nudge_x;
 		double im = state->startIm - y*nudge_y;
 		if (optim1(real,im)){
-            cairo_set_source_rgb(cr,0,0,0);
+            pix[(y*w + x)*3 + 0] = 0;
+            pix[(y*w + x)*3 + 1] = 0;
+            pix[(y*w + x)*3 + 2] = 0;
+            /* cairo_set_source_rgb(cr,0,0,0); */
 		} else {
 			int n = divergence(real,im,settings->maxIt);
-			if (n == -1)
-                cairo_set_source_rgb(cr,0,0,0);
+			if (n == -1){
+                pix[(y*w + x)*3 + 0] = 0;
+                pix[(y*w + x)*3 + 1] = 0;
+                pix[(y*w + x)*3 + 2] = 0;
+                /* cairo_set_source_rgb(cr,0,0,0); */
+            }
 			else {
 				int bloc = maxIt/(sizePalette*nbRepeat);
 				int dist = (n%bloc)*255/bloc;
 				int p1 = (n/bloc)%sizePalette;
 				int p2 = (p1 + 1)%sizePalette;
-                double r = (double)(pa.colors[p2*3+0]*dist + pa.colors[p1*3+0]*(255 - dist))/255/255;
-                double g = (double)(pa.colors[p2*3+1]*dist + pa.colors[p1*3+1]*(255 - dist))/255/255;
-                double b = (double)(pa.colors[p2*3+2]*dist + pa.colors[p1*3+2]*(255 - dist))/255/255;
-                cairo_set_source_rgb(cr,r,g,b);
+                double r = (double)(pa.colors[p2*3+0]*dist + pa.colors[p1*3+0]*(255 - dist))/255;
+                double g = (double)(pa.colors[p2*3+1]*dist + pa.colors[p1*3+1]*(255 - dist))/255;
+                double b = (double)(pa.colors[p2*3+2]*dist + pa.colors[p1*3+2]*(255 - dist))/255;
+                pix[(y*w + x)*3 + 0] = (char)r;
+                pix[(y*w + x)*3 + 1] = (char)g;
+                pix[(y*w + x)*3 + 2] = (char)b;
+                /* cairo_set_source_rgb(cr,r,g,b); */
 			}
 		}
-        cairo_rectangle(cr,x,y,1,1);
-        cairo_fill(cr);
+        /* cairo_rectangle(cr,x,y,1,1); */
+        /* cairo_fill(cr); */
 	}
 
 }
