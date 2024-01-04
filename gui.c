@@ -37,6 +37,12 @@ gboolean coordinates(GtkWidget *widget,GdkEventButton *event, gpointer user_data
     return FALSE;
 }
 
+gboolean on_resize(GtkWidget* widget,GdkEventConfigure *event, gpointer user_data){
+    OverallState* os = user_data;
+    g_idle_add(render_step,os);
+    return FALSE;
+}
+
 // Signal handler for any action that would close the program.
 gboolean on_quit(GtkMenuItem* item, gpointer user_data)
 {
@@ -100,6 +106,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 
 	// Connecting signal handlers
     g_signal_connect(main_window, "destroy", G_CALLBACK(on_quit), NULL);
+    g_signal_connect(area, "configure-event", G_CALLBACK(on_resize), os);
     gtk_widget_add_events(GTK_WIDGET(area), GDK_BUTTON_PRESS_MASK);
     g_signal_connect(area, "button_press_event", G_CALLBACK(coordinates), os);
 	g_signal_connect(area, "draw", G_CALLBACK(on_draw), os);
@@ -108,8 +115,6 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(G_OBJECT(btn_file_quit), "activate", G_CALLBACK(on_quit), os);
 
     gtk_widget_show_all(GTK_WIDGET(main_window));
-
-    g_idle_add(render_step,os);
 
     gtk_main();
 
