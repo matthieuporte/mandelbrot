@@ -51,15 +51,15 @@ void mandelbrot(guchar* pix,point* coordinates, int n_coord, OverallState* os){
 
     int w = state->w;
     int h = state->h;
+    int avg = (h+w)/2;
 
-	double nudge_x = state->zoom/w;
-	double nudge_y = state->zoom/h;
+    double nudge = state->zoom/w;
 
 	for (int p = 0; p < n_coord; p++){
 		int y = coordinates[p].y;
 		int x = coordinates[p].x;
-		double real = state->startReal + x*nudge_x;
-		double im = state->startIm - y*nudge_y;
+		double real = state->startReal + x*nudge;
+		double im = state->startIm - y*nudge;
 		if (optim1(real,im)){
             pix[(y*w + x)*3 + 0] = 0;
             pix[(y*w + x)*3 + 1] = 0;

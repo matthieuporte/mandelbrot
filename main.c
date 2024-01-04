@@ -14,15 +14,15 @@ main (int argc, char **argv)
     mandstate->zoom = 3;
     mandstate->scroll = 2;
     /* mandstate->colorBuf = gdk_pixbuf_new_from_file("~/pictures/wallpapers/shrek.jpg", NULL); */
-    mandstate->colorBuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, 400, 400);
+    mandstate->colorBuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, 960, 540);
 	
 	AppSettings* appset = malloc(sizeof(AppSettings));
 	appset->unsaved_changes = 1;
     appset->palette_list = load_palettes();
     appset->palette = appset->palette_list[0];
-    appset->nbRepeat = 1;
+    appset->nbRepeat = 3;
     appset->scrollSpeed = 1.5;
-    appset->maxIt = 100;
+    appset->maxIt = 300;
     appset->nbThreads = 1;
 
     OverallState* os = malloc(sizeof(OverallState));

@@ -18,7 +18,7 @@ gboolean coordinates(GtkWidget *widget,GdkEventButton *event, gpointer user_data
         // Coordinates of the click
         if (event->button == 1){
             os->state->startReal += event->x/os->state->w*os->state->scroll;
-            os->state->startIm -= event->y/os->state->h*os->state->scroll;
+            os->state->startIm -= event->y/os->state->w*os->state->scroll;
             os->state->zoom -= os->state->scroll;
             os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
         } else if (event->button == 3){
@@ -84,7 +84,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 	GtkButton* unsaved_changes_save = GTK_BUTTON(gtk_builder_get_object(builder, "unsaved_changes_save"));
 
     // TODO change the following line
-    gtk_widget_set_size_request(area, gdk_pixbuf_get_width(os->state->colorBuf), gdk_pixbuf_get_height(os->state->colorBuf));
+    /* gtk_widget_set_size_request(area, gdk_pixbuf_get_width(os->state->colorBuf), gdk_pixbuf_get_height(os->state->colorBuf)); */
 	
 	
 	/* GtkWindow** windows = malloc(sizeof(GtkWindow*)*2); // Stores references to all the app's windows; */
