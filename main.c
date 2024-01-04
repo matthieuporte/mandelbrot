@@ -10,10 +10,11 @@ main (int argc, char **argv)
 	// Initializing Application state
 	MandelbrotState* mandstate = malloc(sizeof(MandelbrotState));
 	mandstate->startReal = -2;
+    mandstate->w = 100;
+    mandstate->h = 100;
 	mandstate->startIm = 1;
     mandstate->zoom = 3;
     mandstate->scroll = 2;
-    /* mandstate->colorBuf = gdk_pixbuf_new_from_file("~/pictures/wallpapers/shrek.jpg", NULL); */
     mandstate->colorBuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, 960, 540);
 	
 	AppSettings* appset = malloc(sizeof(AppSettings));
@@ -23,7 +24,8 @@ main (int argc, char **argv)
     appset->nbRepeat = 3;
     appset->scrollSpeed = 1.5;
     appset->maxIt = 300;
-    appset->nbThreads = 1;
+    appset->nbThreads = 16;
+    appset->nbSteps = 10;
 
     OverallState* os = malloc(sizeof(OverallState));
     os->state = mandstate;

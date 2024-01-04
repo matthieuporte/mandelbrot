@@ -28,21 +28,24 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
     OverallState* os = user_data;
     MandelbrotState* state = os->state;
+
+    int w = gtk_widget_get_allocated_width(widget);
+    int h = gtk_widget_get_allocated_width(widget);
+
+    state->colorBuf = gdk_pixbuf_scale_simple(state->colorBuf,
+            w, h, GDK_INTERP_BILINEAR);
+
     GdkPixbuf* pixbuf = state->colorBuf;
-    /* int w = gtk_widget_get_allocated_width(widget); */
-    /* int h = gtk_widget_get_allocated_width(widget); */
-    int w = gdk_pixbuf_get_width(pixbuf);
-    int h = gdk_pixbuf_get_height(pixbuf);
     state->w = w;
     state->h = h;
 
-
-    int nbThreads = 16;//os->settings->nbThreads;
+    int nbSteps = os->settings->nbSteps;
+    int nbThreads = os->settings->nbThreads;
     int nbPix = w * h;
 
     point* coordinates = malloc(nbPix*sizeof(point));
-	int size = nbPix/nbThreads;
-	int remSize = nbPix%nbThreads;
+	int size = nbPix/(nbThreads*nbSteps);
+	int remSize = nbPix%(nbThreads*nbSteps);
 
 	for (int y = 0; y < h; y++){
 		for (int x = 0; x < w; x++){
@@ -55,35 +58,33 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
     guchar *pixels = gdk_pixbuf_get_pixels(pixbuf);
 
-    // Example: Manipulate pixel data (e.g., invert colors)
-    /* for (int i = 0; i < w * h * 3; i++) { */
-    /*     pixels[i] = 255 - pixels[i]; */
-    /* } */
-
-
 	coorShuff(coordinates,nbPix);
 	GThread* thr[nbThreads];
-	thread_data data[nbThreads];
+	thread_data data[nbThreads*nbSteps];
 
-    for (int j = 0; j < nbThreads; j++){
-        data[j].pix = pixels;
-        data[j].coordinates = coordinates+j*size;
-        data[j].os = os;
-        data[j].size = (size_t)size;
-        if (j == nbThreads - 1)
-            data[j].size += (size_t)remSize;
-        thr[j] = g_thread_new("mythread",worker,data+j);
+    for (int i = 0; i < nbSteps; i++){
+        for (int j = 0; j < nbThreads; j++){
+            int index = i*nbThreads + j;
+            data[index].pix = pixels;
+            data[index].coordinates = coordinates+j*size;
+            data[index].os = os;
+            data[index].size = (size_t)size;
+            if (index == nbThreads*nbSteps - 1)
+                data[j].size += (size_t)remSize;
+            thr[j] = g_thread_new("mythread",worker,data+index);
+        }
+        for (int j = 0; j < nbThreads; j++){
+            g_thread_join(thr[j]);
+        }
+        /* cairo_fill(cr); */
+        GdkPixbuf *modifiedPixbuf = gdk_pixbuf_copy(pixbuf);
+
+        gdk_cairo_set_source_pixbuf(cr, modifiedPixbuf, 0, 0);
+        cairo_paint(cr);
+
+        g_object_unref(modifiedPixbuf);
+        /* gtk_widget_queue_draw(os->area); */
     }
-    for (int j = 0; j < nbThreads; j++){
-        g_thread_join(thr[j]);
-    }
-    /* cairo_fill(cr); */
-    GdkPixbuf *modifiedPixbuf = gdk_pixbuf_copy(pixbuf);
-
-    gdk_cairo_set_source_pixbuf(cr, modifiedPixbuf, 0, 0);
-    cairo_paint(cr);
-
-    g_object_unref(modifiedPixbuf);
 
 	return FALSE;
 }

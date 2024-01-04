@@ -20,6 +20,7 @@ typedef struct MandelbrotState
     double scroll;
     int* pixBuf;
     GdkPixbuf* colorBuf;
+    int curStep;
     int w;
     int h;
 } MandelbrotState;
@@ -33,12 +34,14 @@ typedef struct AppSettings
     double scrollSpeed;
     int maxIt;
     int nbThreads;
+    int nbSteps;
 } AppSettings;
 
 typedef struct OverallState
 {
     AppSettings* settings;
     MandelbrotState* state;
+    GtkDrawingArea* area;
 } OverallState;
 
 
