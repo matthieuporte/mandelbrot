@@ -30,6 +30,7 @@ gboolean coordinates(GtkWidget *widget,GdkEventButton *event, gpointer user_data
         }
         g_print("Button pressed at coordinates (%f, %f)\n", event->x, event->y);
         
+        g_idle_add(render_step,os);
         gtk_widget_queue_draw(widget);
 
     }
@@ -107,6 +108,8 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(G_OBJECT(btn_file_quit), "activate", G_CALLBACK(on_quit), os);
 
     gtk_widget_show_all(GTK_WIDGET(main_window));
+
+    g_idle_add(render_step,os);
 
     gtk_main();
 

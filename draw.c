@@ -22,20 +22,19 @@ void coorShuff (point* coord,int n){
 	}
 }
 
-// Signal handler for the "draw" signal of the drawing area.
-gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
+gboolean initial_setup(OverallState* os)
 {
-
-    OverallState* os = user_data;
+    g_print("settuping\n");
     MandelbrotState* state = os->state;
 
-    int w = gtk_widget_get_allocated_width(widget);
-    int h = gtk_widget_get_allocated_width(widget);
+    RenderInfo* ri = os->renderInfo;
+
+    int w = gtk_widget_get_allocated_width(GTK_WIDGET(os->area));
+    int h = gtk_widget_get_allocated_width(GTK_WIDGET(os->area));
 
     state->colorBuf = gdk_pixbuf_scale_simple(state->colorBuf,
             w, h, GDK_INTERP_BILINEAR);
 
-    GdkPixbuf* pixbuf = state->colorBuf;
     state->w = w;
     state->h = h;
 
@@ -43,48 +42,82 @@ gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data)
     int nbThreads = os->settings->nbThreads;
     int nbPix = w * h;
 
-    point* coordinates = malloc(nbPix*sizeof(point));
-	int size = nbPix/(nbThreads*nbSteps);
-	int remSize = nbPix%(nbThreads*nbSteps);
+    ri->coordinates = malloc(nbPix*sizeof(point));
+	ri->size = nbPix/(nbThreads*nbSteps);
+	ri->remSize = nbPix%(nbThreads*nbSteps);
 
 	for (int y = 0; y < h; y++){
 		for (int x = 0; x < w; x++){
 			point p;
 			p.x = x;
 			p.y = y;
-			coordinates[y*w + x] = p;
+			ri->coordinates[y*w + x] = p;
 		}
 	}
 
-    guchar *pixels = gdk_pixbuf_get_pixels(pixbuf);
+	coorShuff(ri->coordinates,nbPix);
+    ri->curStep = 0;
+}
 
-	coorShuff(coordinates,nbPix);
-	GThread* thr[nbThreads];
-	thread_data data[nbThreads*nbSteps];
+gboolean render_step(gpointer user_data){
 
-    for (int i = 0; i < nbSteps; i++){
-        for (int j = 0; j < nbThreads; j++){
-            int index = i*nbThreads + j;
-            data[index].pix = pixels;
-            data[index].coordinates = coordinates+j*size;
-            data[index].os = os;
-            data[index].size = (size_t)size;
-            if (index == nbThreads*nbSteps - 1)
-                data[j].size += (size_t)remSize;
-            thr[j] = g_thread_new("mythread",worker,data+index);
-        }
-        for (int j = 0; j < nbThreads; j++){
-            g_thread_join(thr[j]);
-        }
-        /* cairo_fill(cr); */
-        GdkPixbuf *modifiedPixbuf = gdk_pixbuf_copy(pixbuf);
+    OverallState* os = user_data;
+    MandelbrotState* state = os->state;
+    RenderInfo* ri = os->renderInfo;
 
-        gdk_cairo_set_source_pixbuf(cr, modifiedPixbuf, 0, 0);
-        cairo_paint(cr);
-
-        g_object_unref(modifiedPixbuf);
-        /* gtk_widget_queue_draw(os->area); */
+    if (!ri->init_done){
+        initial_setup(os);
+        ri->init_done = TRUE;
     }
 
-	return FALSE;
+    g_print("curstep : %d\n",ri->curStep);
+
+    if (ri->curStep >= os->settings->nbSteps){
+        // Cleanup and return FALSE to stop the idle callback
+        ri->init_done = FALSE;
+        return FALSE;
+    }
+
+
+    int nbSteps = os->settings->nbSteps;
+    int nbThreads = os->settings->nbThreads;
+    int nbPix = state->w * state->h;
+
+	GThread* thr[nbThreads];
+	thread_data data[nbThreads*nbSteps];
+    GdkPixbuf* pixbuf = state->colorBuf;
+    guchar *pixels = gdk_pixbuf_get_pixels(pixbuf);
+    
+    for (int j = 0; j < nbThreads; j++){
+        int index = ri->curStep*nbThreads + j;
+        data[index].pix = pixels;
+        data[index].coordinates = ri->coordinates+j*ri->size;
+        data[index].os = os;
+        data[index].size = (size_t)ri->size;
+        if (ri->curStep == (nbSteps-1) && j == nbThreads-1){
+            data[index].size += (size_t)ri->remSize;
+        }
+        thr[j] = g_thread_new("mythread",worker,data+index);
+    }
+    for (int j = 0; j < nbThreads; j++){
+        g_thread_join(thr[j]);
+    }
+
+    gtk_widget_queue_draw(GTK_WIDGET(os->area));
+
+    ri->curStep += 1;
+    // Return TRUE to keep the idle callback active
+    return TRUE;
+}
+
+gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data){
+    g_print("ondraw()\n");
+    OverallState* os = user_data;
+
+    // Draw the current state of the Pixbuf on the drawing area
+    gdk_cairo_set_source_pixbuf(cr, os->state->colorBuf, 0, 0);
+    cairo_paint(cr);
+
+    // Return FALSE to indicate that the event has been handled
+    return FALSE;
 }

@@ -2,4 +2,4 @@
 
 gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data);
 
-gboolean step_draw(gpointer user_data);
+gboolean render_step(gpointer user_data);

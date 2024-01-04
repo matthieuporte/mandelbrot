@@ -37,10 +37,20 @@ typedef struct AppSettings
     int nbSteps;
 } AppSettings;
 
+typedef struct RenderInfo
+{
+    gboolean init_done;
+    point* coordinates;
+    int curStep;
+    int size;
+    int remSize;
+} RenderInfo;
+
 typedef struct OverallState
 {
     AppSettings* settings;
     MandelbrotState* state;
+    RenderInfo* renderInfo;
     GtkDrawingArea* area;
 } OverallState;
 
