@@ -42,6 +42,13 @@ gboolean initial_setup(OverallState* os)
     int nbThreads = os->settings->nbThreads;
     int nbPix = w * h;
 
+    GdkPixbuf* pixbuf = state->colorBuf;
+    guchar *pixels = gdk_pixbuf_get_pixels(pixbuf);
+
+    for (int i = 0; i < w * h * 3; i++) {
+        pixels[i] = 0;  // Set to black
+    }
+
     ri->coordinates = malloc(nbPix*sizeof(point));
 	ri->size = nbPix/(nbThreads*nbSteps);
 	ri->remSize = nbPix%(nbThreads*nbSteps);
@@ -91,7 +98,7 @@ gboolean render_step(gpointer user_data){
     for (int j = 0; j < nbThreads; j++){
         int index = ri->curStep*nbThreads + j;
         data[index].pix = pixels;
-        data[index].coordinates = ri->coordinates+j*ri->size;
+        data[index].coordinates = ri->coordinates+index*ri->size;
         data[index].os = os;
         data[index].size = (size_t)ri->size;
         if (ri->curStep == (nbSteps-1) && j == nbThreads-1){

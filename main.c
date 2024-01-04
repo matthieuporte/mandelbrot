@@ -19,10 +19,10 @@ main (int argc, char **argv)
 	appset->unsaved_changes = 1;
     appset->palette_list = load_palettes();
     appset->palette = appset->palette_list[0];
-    appset->nbRepeat = 50;
+    appset->nbRepeat = 3;
     appset->scrollSpeed = 1.5;
-    appset->maxIt = 10000;
-    appset->nbThreads = 1;
+    appset->maxIt = 1000;
+    appset->nbThreads = 16;
     appset->nbSteps = 10;
 
     RenderInfo* ri = malloc(sizeof(RenderInfo));
