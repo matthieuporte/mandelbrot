@@ -28,7 +28,7 @@ gboolean coordinates(GtkWidget *widget,GdkEventButton *event, gpointer user_data
             os->state->zoom += os->state->scroll;
             os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
         }
-        g_print("Button pressed at coordinates (%f, %f)\n", event->x, event->y);
+        /* g_print("Button pressed at coordinates (%f, %f)\n", event->x, event->y); */
         
         g_source_remove(os->renderInfo->id);
         os->renderInfo->init_done = FALSE;
@@ -36,6 +36,35 @@ gboolean coordinates(GtkWidget *widget,GdkEventButton *event, gpointer user_data
         gtk_widget_queue_draw(widget);
 
     }
+    return FALSE;
+}
+
+
+gboolean on_scroll_event(GtkWidget *widget,GdkEventScroll *event, gpointer user_data)
+{
+    OverallState* os = user_data;
+
+        g_print("%f\n",event->delta_y);
+    // Coordinates of the click
+    if (event->direction == GDK_SCROLL_UP) {
+        os->state->startReal += event->x/os->state->w*os->state->scroll;
+        os->state->startIm -= event->y/os->state->w*os->state->scroll;
+        os->state->zoom -= os->state->scroll;
+        os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
+    } else if (event->direction == GDK_SCROLL_DOWN) {
+        //TODO use a linked list here
+        os->state->startReal -= event->x/os->state->w*os->state->scroll;
+        os->state->startIm += event->y/os->state->h*os->state->scroll;
+        os->state->zoom += os->state->scroll;
+        os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
+    }
+    g_print("scrolled at coordinates (%f, %f)\n", event->x, event->y);
+    
+    g_source_remove(os->renderInfo->id);
+    os->renderInfo->init_done = FALSE;
+    os->renderInfo->id = g_idle_add(render_step,os);
+    gtk_widget_queue_draw(widget);
+
     return FALSE;
 }
 
@@ -113,6 +142,8 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(area, "configure-event", G_CALLBACK(on_resize), os);
     gtk_widget_add_events(GTK_WIDGET(area), GDK_BUTTON_PRESS_MASK);
     g_signal_connect(area, "button_press_event", G_CALLBACK(coordinates), os);
+    gtk_widget_add_events(GTK_WIDGET(area), GDK_SCROLL_MASK);
+    g_signal_connect(area, "scroll-event", G_CALLBACK(on_scroll_event), os);
 	g_signal_connect(area, "draw", G_CALLBACK(on_draw), os);
     
     g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(hello), NULL);
