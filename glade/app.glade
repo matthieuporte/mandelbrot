@@ -2,38 +2,12 @@
 <!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkAboutDialog" id="org.gtk.about">
-    <property name="can-focus">False</property>
-    <property name="type-hint">dialog</property>
-    <property name="program-name">Glade</property>
-    <property name="logo-icon-name">image-missing</property>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can-focus">False</property>
-            <property name="layout-style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
-    </child>
+  <object class="GtkAdjustment" id="adjustment1">
+    <property name="lower">1</property>
+    <property name="upper">2000</property>
+    <property name="value">300</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
   </object>
   <object class="GtkWindow" id="org.gtk.mandelbrot">
     <property name="can-focus">False</property>
@@ -185,14 +159,16 @@
             <child>
               <object class="GtkBox" id="settings_panel">
                 <property name="name">panel_settings</property>
+                <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="xpad">8</property>
-                    <property name="label" translatable="yes">Précision :</property>
+                    <property name="xpad">16</property>
+                    <property name="ypad">4</property>
+                    <property name="label" translatable="yes">Iterations :</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -201,12 +177,14 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkScale">
+                  <object class="GtkScale" id="itr_scale">
+                    <property name="width-request">100</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="fill-level">2000</property>
+                    <property name="adjustment">adjustment1</property>
+                    <property name="fill-level">5000</property>
                     <property name="round-digits">1</property>
-                    <property name="draw-value">False</property>
+                    <property name="digits">0</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -259,8 +237,8 @@
             </child>
             <child>
               <object class="GtkDrawingArea" id="area">
-                <property name="width-request">960</property>
-                <property name="height-request">540</property>
+                <property name="width-request">600</property>
+                <property name="height-request">400</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
               </object>
@@ -276,6 +254,39 @@
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkAboutDialog" id="org.gtk.about">
+    <property name="can-focus">False</property>
+    <property name="type-hint">dialog</property>
+    <property name="program-name">Glade</property>
+    <property name="logo-icon-name">image-missing</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
         </child>
       </object>
     </child>

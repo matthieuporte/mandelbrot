@@ -100,6 +100,10 @@ gboolean on_quit(GtkMenuItem* item, gpointer user_data)
     return TRUE;
 }
 
+void itr_scale_update(GtkRange *range, OverallState* os) {
+    int value = (int)gtk_range_get_value(range);
+    os->settings->maxIt = value;
+}
 
 // Main function.
 int gui_run (int* argc, char** argv[], OverallState* os)
@@ -144,7 +148,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 
     GtkMenuItem *btn_toolbar = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_toolbar"));
     GtkBox* settings_panel = GTK_BOX(gtk_builder_get_object(builder, "settings_panel"));
-
+    GtkScale* itr_scale = GTK_SCALE(gtk_builder_get_object(builder, "itr_scale"));
     // TODO change the following line
     /* gtk_widget_set_size_request(area, gdk_pixbuf_get_width(os->state->colorBuf), gdk_pixbuf_get_height(os->state->colorBuf)); */
 	
@@ -159,6 +163,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 
     os->area = area;
     os->settings_panel = settings_panel;
+    /* os->settings->itr_scale = itr_scale; */
 
 	// Connecting signal handlers
     g_signal_connect(main_window, "destroy", G_CALLBACK(on_quit), NULL);
@@ -168,6 +173,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     gtk_widget_add_events(GTK_WIDGET(area), GDK_SCROLL_MASK);
     g_signal_connect(area, "scroll-event", G_CALLBACK(on_scroll_event), os);
 	g_signal_connect(area, "draw", G_CALLBACK(on_draw), os);
+    g_signal_connect(G_OBJECT(itr_scale), "value-changed", G_CALLBACK(itr_scale_update), os);
     
     g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(hello), os);
     g_signal_connect(G_OBJECT(btn_toolbar), "activate", G_CALLBACK(switchPanel), os);
@@ -178,7 +184,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(G_OBJECT(main_window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     gtk_widget_show_all(GTK_WIDGET(main_window));
-    gtk_widget_hide(GTK_WIDGET(settings_panel));
+    /* gtk_widget_hide(GTK_WIDGET(settings_panel)); */
 
     gtk_main();
 

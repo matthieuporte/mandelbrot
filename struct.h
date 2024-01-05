@@ -36,6 +36,7 @@ typedef struct AppSettings
     int maxIt;
     int nbThreads;
     int nbSteps;
+    GtkScale* itr_scale;
 } AppSettings;
 
 typedef struct RenderInfo
