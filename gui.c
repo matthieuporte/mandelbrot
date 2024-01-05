@@ -10,32 +10,29 @@ void hello(GtkMenuItem *item, gpointer user_data)
     g_print("Hello World\n");
 }
 
+void redraw(OverallState* os){
+    g_source_remove(os->renderInfo->id);
+    os->renderInfo->init_done = FALSE;
+    os->renderInfo->id = g_idle_add(render_step,os);
+    gtk_widget_queue_draw(GTK_WIDGET(os->area));
+}
+
+void recalibrate(OverallState* os,int direction,double x,double y){ 
+    os->state->startReal += (x/os->state->w*os->state->scroll)*direction;
+    os->state->startIm += (y/os->state->w*os->state->scroll)*direction*(-1);
+    os->state->zoom += (os->state->scroll)*direction*(-1);
+    os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
+}
+
 gboolean coordinates(GtkWidget *widget,GdkEventButton *event, gpointer user_data)
 {
-    if (event->type == GDK_BUTTON_PRESS) {
-        OverallState* os = user_data;
+    OverallState* os = user_data;
+    if (event->button == 1)
+        recalibrate(os,1,event->x,event->y);
+    else if (event->button == 3)
+        recalibrate(os,-1,event->x,event->y);
 
-        // Coordinates of the click
-        if (event->button == 1){
-            os->state->startReal += event->x/os->state->w*os->state->scroll;
-            os->state->startIm -= event->y/os->state->w*os->state->scroll;
-            os->state->zoom -= os->state->scroll;
-            os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
-        } else if (event->button == 3){
-            //TODO use a linked list here
-            os->state->startReal -= event->x/os->state->w*os->state->scroll;
-            os->state->startIm += event->y/os->state->h*os->state->scroll;
-            os->state->zoom += os->state->scroll;
-            os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
-        }
-        /* g_print("Button pressed at coordinates (%f, %f)\n", event->x, event->y); */
-        
-        g_source_remove(os->renderInfo->id);
-        os->renderInfo->init_done = FALSE;
-        os->renderInfo->id = g_idle_add(render_step,os);
-        gtk_widget_queue_draw(widget);
-
-    }
+    redraw(os);
     return FALSE;
 }
 
@@ -43,34 +40,37 @@ gboolean coordinates(GtkWidget *widget,GdkEventButton *event, gpointer user_data
 gboolean on_scroll_event(GtkWidget *widget,GdkEventScroll *event, gpointer user_data)
 {
     OverallState* os = user_data;
-
-    // Coordinates of the click
-    if (event->direction == GDK_SCROLL_UP) {
-        os->state->startReal += event->x/os->state->w*os->state->scroll;
-        os->state->startIm -= event->y/os->state->w*os->state->scroll;
-        os->state->zoom -= os->state->scroll;
-        os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
-    } else if (event->direction == GDK_SCROLL_DOWN) {
-        //TODO use a linked list here
-        os->state->startReal -= event->x/os->state->w*os->state->scroll;
-        os->state->startIm += event->y/os->state->h*os->state->scroll;
-        os->state->zoom += os->state->scroll;
-        os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
-    }
+    if (event->direction == GDK_SCROLL_UP)
+        recalibrate(os,1,event->x,event->y);
+    else if (event->direction == GDK_SCROLL_DOWN)
+        recalibrate(os,-1,event->x,event->y);
     
-    g_source_remove(os->renderInfo->id);
-    os->renderInfo->init_done = FALSE;
-    os->renderInfo->id = g_idle_add(render_step,os);
-    gtk_widget_queue_draw(widget);
+    redraw(os);
+    return FALSE;
+}
 
+gboolean paletteAether(GtkMenuItem *item, gpointer user_data){
+    OverallState* os = user_data;
+    os->settings->palette = os->settings->palette_list[2]; 
+    redraw(os);
+    return FALSE;
+}
+gboolean paletteFire(GtkMenuItem *item, gpointer user_data){
+    OverallState* os = user_data;
+    os->settings->palette = os->settings->palette_list[1]; 
+    redraw(os);
+    return FALSE;
+}
+gboolean paletteBlue(GtkMenuItem *item, gpointer user_data){
+    OverallState* os = user_data;
+    os->settings->palette = os->settings->palette_list[0]; 
+    redraw(os);
     return FALSE;
 }
 
 gboolean on_resize(GtkWidget* widget,GdkEventConfigure *event, gpointer user_data){
     OverallState* os = user_data;
-    g_source_remove(os->renderInfo->id);
-    os->renderInfo->init_done = FALSE;
-    os->renderInfo->id = g_idle_add(render_step,os);
+    redraw(os);
     return FALSE;
 }
 
@@ -114,6 +114,11 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 
     /* GtkMenuBar *menubar = GTK_MENU_BAR(gtk_builder_get_object(builder, "menubar")); */
     /* GtkMenuItem *fileMenu = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_file")); */
+    GtkMenuItem *settingsMenu = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_settings"));
+    GtkMenuItem *palettesMenu = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_palettes"));
+    GtkMenuItem *btn_aether = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_aether"));
+    GtkMenuItem *btn_fire = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_fire"));
+    GtkMenuItem *btn_blue = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_blue"));
     GtkMenuItem *btn_file_new = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_new"));
     GtkMenuItem *btn_file_quit = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_quit"));
     /* GtkMenu *submenu_file = GTK_MENU(gtk_builder_get_object(builder, "submenu_file")); */
@@ -145,6 +150,9 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 	g_signal_connect(area, "draw", G_CALLBACK(on_draw), os);
     
     g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(hello), NULL);
+    g_signal_connect(G_OBJECT(btn_aether), "activate", G_CALLBACK(paletteAether), os);
+    g_signal_connect(G_OBJECT(btn_fire), "activate", G_CALLBACK(paletteFire), os);
+    g_signal_connect(G_OBJECT(btn_blue), "activate", G_CALLBACK(paletteBlue), os);
     g_signal_connect(G_OBJECT(btn_file_quit), "activate", G_CALLBACK(on_quit), os);
 
     gtk_widget_show_all(GTK_WIDGET(main_window));
