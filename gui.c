@@ -84,6 +84,12 @@ gboolean on_resize(GtkWidget* widget,GdkEventConfigure *event, gpointer user_dat
     return FALSE;
 }
 
+gboolean apply_settings(GtkWidget* widget, OverallState* os){
+    redraw(os);
+    return FALSE;
+}
+
+
 // Signal handler for any action that would close the program.
 gboolean on_quit(GtkMenuItem* item, gpointer user_data)
 {
@@ -149,6 +155,8 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     GtkMenuItem *btn_toolbar = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_toolbar"));
     GtkBox* settings_panel = GTK_BOX(gtk_builder_get_object(builder, "settings_panel"));
     GtkScale* itr_scale = GTK_SCALE(gtk_builder_get_object(builder, "itr_scale"));
+	GtkButton* btn_apply_settings = GTK_BUTTON(gtk_builder_get_object(builder, "btn_apply_settings"));
+
     // TODO change the following line
     /* gtk_widget_set_size_request(area, gdk_pixbuf_get_width(os->state->colorBuf), gdk_pixbuf_get_height(os->state->colorBuf)); */
 	
@@ -181,6 +189,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(G_OBJECT(btn_fire), "activate", G_CALLBACK(paletteFire), os);
     g_signal_connect(G_OBJECT(btn_blue), "activate", G_CALLBACK(paletteBlue), os);
     g_signal_connect(G_OBJECT(btn_file_quit), "activate", G_CALLBACK(on_quit), os);
+    g_signal_connect(G_OBJECT(btn_apply_settings), "clicked", G_CALLBACK(apply_settings), os);
     g_signal_connect(G_OBJECT(main_window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     gtk_widget_show_all(GTK_WIDGET(main_window));
