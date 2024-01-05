@@ -23,8 +23,10 @@ main (int argc, char **argv)
     appset->nbRepeat = 3;
     appset->scrollSpeed = 1.5;
     appset->maxIt = 1000;
-    appset->nbThreads = 16;
+    appset->nbThreads = sysconf(_SC_NPROCESSORS_ONLN);
     appset->nbSteps = 10;
+    appset->transition = FALSE;
+    g_print("%d\n",appset->transition);
 
     RenderInfo* ri = malloc(sizeof(RenderInfo));
     ri->init_done = FALSE;

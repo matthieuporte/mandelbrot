@@ -38,6 +38,7 @@ typedef struct AppSettings
     int nbSteps;
     GtkScale* itr_scale;
     GtkScale* theme_scale;
+    gboolean transition;
 } AppSettings;
 
 typedef struct RenderInfo

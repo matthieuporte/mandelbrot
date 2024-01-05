@@ -135,6 +135,20 @@ void threads_scale_update(GtkRange *range, OverallState* os) {
     gtk_widget_queue_draw(GTK_WIDGET(os->area));
 }
 
+void steps_scale_update(GtkRange *range, OverallState* os) {
+    g_source_remove(os->renderInfo->id);
+    os->renderInfo->init_done = FALSE;
+    int value = (int)gtk_range_get_value(range);
+    os->settings->nbSteps = value;
+    os->renderInfo->id = g_idle_add(render_step,os);
+    gtk_widget_queue_draw(GTK_WIDGET(os->area));
+}
+
+gboolean set_transition(GtkSwitch* s,gboolean state, OverallState* os){
+    os->settings->transition = state;
+    return FALSE;
+}
+
 // Main function.
 int gui_run (int* argc, char** argv[], OverallState* os)
 {
@@ -181,8 +195,10 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     GtkScale* itr_scale = GTK_SCALE(gtk_builder_get_object(builder, "itr_scale"));
     GtkScale* theme_scale = GTK_SCALE(gtk_builder_get_object(builder, "theme_scale"));
     GtkScale* threads_scale = GTK_SCALE(gtk_builder_get_object(builder, "threads_scale"));
+    GtkScale* steps_scale = GTK_SCALE(gtk_builder_get_object(builder, "steps_scale"));
     gtk_range_set_range(GTK_RANGE(threads_scale), 1,sysconf(_SC_NPROCESSORS_ONLN));
     gtk_range_set_value(GTK_RANGE(threads_scale), sysconf(_SC_NPROCESSORS_ONLN));
+    GtkSwitch* transition_switch = GTK_SWITCH(gtk_builder_get_object(builder, "transition_switch"));
 	GtkButton* btn_apply_settings = GTK_BUTTON(gtk_builder_get_object(builder, "btn_apply_settings"));
 
     // TODO change the following line
@@ -213,6 +229,8 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(G_OBJECT(itr_scale), "value-changed", G_CALLBACK(itr_scale_update), os);
     g_signal_connect(G_OBJECT(theme_scale), "value-changed", G_CALLBACK(theme_scale_update), os);
     g_signal_connect(G_OBJECT(threads_scale), "value-changed", G_CALLBACK(threads_scale_update), os);
+    g_signal_connect(G_OBJECT(steps_scale), "value-changed", G_CALLBACK(steps_scale_update), os);
+    g_signal_connect(G_OBJECT(transition_switch), "state-set", G_CALLBACK(set_transition), os);
     
     g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(hello), os);
     g_signal_connect(G_OBJECT(btn_toolbar), "activate", G_CALLBACK(switchPanel), os);

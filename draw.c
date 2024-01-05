@@ -47,8 +47,10 @@ gboolean initial_setup(OverallState* os)
 
     /* clock_t start_time = clock(); */
 
-    for (int i = 0; i < w * h * 3; i++) {
-        pixels[i] = 0;  // Set to black
+    if (!os->settings->transition){
+        for (int i = 0; i < w * h * 3; i++) {
+            pixels[i] = 0;  // Set to black
+        }
     }
     
     /* clock_t end_time = clock(); */
