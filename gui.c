@@ -125,6 +125,16 @@ void theme_scale_update(GtkRange *range, OverallState* os) {
         os->settings->nbRepeat = value;
 }
 
+
+void threads_scale_update(GtkRange *range, OverallState* os) {
+    g_source_remove(os->renderInfo->id);
+    os->renderInfo->init_done = FALSE;
+    int value = (int)gtk_range_get_value(range);
+    os->settings->nbThreads = value;
+    os->renderInfo->id = g_idle_add(render_step,os);
+    gtk_widget_queue_draw(GTK_WIDGET(os->area));
+}
+
 // Main function.
 int gui_run (int* argc, char** argv[], OverallState* os)
 {
@@ -170,6 +180,9 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     GtkBox* settings_panel = GTK_BOX(gtk_builder_get_object(builder, "settings_panel"));
     GtkScale* itr_scale = GTK_SCALE(gtk_builder_get_object(builder, "itr_scale"));
     GtkScale* theme_scale = GTK_SCALE(gtk_builder_get_object(builder, "theme_scale"));
+    GtkScale* threads_scale = GTK_SCALE(gtk_builder_get_object(builder, "threads_scale"));
+    gtk_range_set_range(GTK_RANGE(threads_scale), 1,sysconf(_SC_NPROCESSORS_ONLN));
+    gtk_range_set_value(GTK_RANGE(threads_scale), sysconf(_SC_NPROCESSORS_ONLN));
 	GtkButton* btn_apply_settings = GTK_BUTTON(gtk_builder_get_object(builder, "btn_apply_settings"));
 
     // TODO change the following line
@@ -199,6 +212,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 	g_signal_connect(area, "draw", G_CALLBACK(on_draw), os);
     g_signal_connect(G_OBJECT(itr_scale), "value-changed", G_CALLBACK(itr_scale_update), os);
     g_signal_connect(G_OBJECT(theme_scale), "value-changed", G_CALLBACK(theme_scale_update), os);
+    g_signal_connect(G_OBJECT(threads_scale), "value-changed", G_CALLBACK(threads_scale_update), os);
     
     g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(hello), os);
     g_signal_connect(G_OBJECT(btn_toolbar), "activate", G_CALLBACK(switchPanel), os);

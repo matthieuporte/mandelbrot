@@ -229,6 +229,7 @@
                     <property name="can-focus">True</property>
                     <property name="focus-on-click">False</property>
                     <property name="receives-default">True</property>
+                    <property name="margin-bottom">2</property>
                     <property name="relief">half</property>
                     <property name="popup">menu2</property>
                     <property name="align-widget">item_settings</property>
@@ -354,6 +355,7 @@
                   <object class="GtkScale" id="scroll_scale">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="adjustment">adjustment_scroll</property>
                     <property name="round-digits">1</property>
                     <property name="digits">0</property>
                     <property name="value-pos">left</property>
@@ -376,6 +378,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
+                    <property name="margin-bottom">2</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
