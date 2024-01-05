@@ -3,7 +3,7 @@
 # Flags for implicit rules
 CC = gcc -fsanitize=address -lm
 CPPFLAGS = -MMD
-CFLAGS = -g -lm -fsanitize=address -Wall -Wconversion -Wextra `pkg-config --cflags gtk+-3.0`
+CFLAGS = -g -lm -fsanitize=address `pkg-config --cflags gtk+-3.0`
 LDLIBS = `pkg-config --libs gtk+-3.0` -lm
 
 

@@ -23,6 +23,7 @@ typedef struct MandelbrotState
     int curStep;
     int w;
     int h;
+    gboolean panelHidden;
 } MandelbrotState;
 
 typedef struct AppSettings 
@@ -53,6 +54,7 @@ typedef struct OverallState
     MandelbrotState* state;
     RenderInfo* renderInfo;
     GtkDrawingArea* area;
+    GtkBox* settings_panel;
 } OverallState;
 
 

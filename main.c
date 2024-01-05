@@ -14,6 +14,7 @@ main (int argc, char **argv)
     mandstate->zoom = 3;
     mandstate->scroll = 2;
     mandstate->colorBuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, 960, 540);
+    mandstate->panelHidden = TRUE;
 	
 	AppSettings* appset = malloc(sizeof(AppSettings));
 	appset->unsaved_changes = 1;

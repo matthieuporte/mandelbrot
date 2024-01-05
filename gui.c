@@ -5,9 +5,19 @@
 #include "palette.h"
 
 // Signal handler for the "clicked" signal of the start button.
-void hello(GtkMenuItem *item, gpointer user_data)
+void hello(GtkMenuItem *item, OverallState* os)
 {
     g_print("Hello World\n");
+}
+
+// Signal handler for the "clicked" signal of the start button.
+void switchPanel(GtkMenuItem *item, OverallState* os)
+{
+    if (os->state->panelHidden)
+        gtk_widget_show(GTK_WIDGET(os->settings_panel));
+    else
+        gtk_widget_hide(GTK_WIDGET(os->settings_panel));
+    os->state->panelHidden = !os->state->panelHidden;
 }
 
 void redraw(OverallState* os){
@@ -110,7 +120,6 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     GtkDrawingArea* area = GTK_DRAWING_AREA(gtk_builder_get_object(builder, "area"));
     GtkWindow* main_window = GTK_WINDOW(gtk_builder_get_object(builder, "org.gtk.mandelbrot"));
 
-    os->area = area;
 
     /* GtkMenuBar *menubar = GTK_MENU_BAR(gtk_builder_get_object(builder, "menubar")); */
     /* GtkMenuItem *fileMenu = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_file")); */
@@ -130,8 +139,11 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 
 
     GtkWindow* about_window = GTK_WINDOW(gtk_builder_get_object(builder, "org.gtk.about"));
-    g_signal_connect(about_window, "destroy", G_CALLBACK(destroy_window), GTK_WIDGET(about_window));
+    /* g_signal_connect(about_window, "destroy", G_CALLBACK(destroy_window), GTK_WIDGET(about_window)); */
 
+
+    GtkMenuItem *btn_toolbar = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_toolbar"));
+    GtkBox* settings_panel = GTK_BOX(gtk_builder_get_object(builder, "settings_panel"));
 
     // TODO change the following line
     /* gtk_widget_set_size_request(area, gdk_pixbuf_get_width(os->state->colorBuf), gdk_pixbuf_get_height(os->state->colorBuf)); */
@@ -145,6 +157,9 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 
 	/* os->windows = windows; */
 
+    os->area = area;
+    os->settings_panel = settings_panel;
+
 	// Connecting signal handlers
     g_signal_connect(main_window, "destroy", G_CALLBACK(on_quit), NULL);
     g_signal_connect(area, "configure-event", G_CALLBACK(on_resize), os);
@@ -154,7 +169,8 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(area, "scroll-event", G_CALLBACK(on_scroll_event), os);
 	g_signal_connect(area, "draw", G_CALLBACK(on_draw), os);
     
-    g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(hello), NULL);
+    g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(hello), os);
+    g_signal_connect(G_OBJECT(btn_toolbar), "activate", G_CALLBACK(switchPanel), os);
     g_signal_connect(G_OBJECT(btn_aether), "activate", G_CALLBACK(paletteAether), os);
     g_signal_connect(G_OBJECT(btn_fire), "activate", G_CALLBACK(paletteFire), os);
     g_signal_connect(G_OBJECT(btn_blue), "activate", G_CALLBACK(paletteBlue), os);
@@ -162,6 +178,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(G_OBJECT(main_window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     gtk_widget_show_all(GTK_WIDGET(main_window));
+    gtk_widget_hide(GTK_WIDGET(settings_panel));
 
     gtk_main();
 
