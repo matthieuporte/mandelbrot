@@ -128,6 +128,11 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 	GtkButton* unsaved_changes_quit = GTK_BUTTON(gtk_builder_get_object(builder, "unsaved_changes_quit"));
 	GtkButton* unsaved_changes_save = GTK_BUTTON(gtk_builder_get_object(builder, "unsaved_changes_save"));
 
+
+    GtkWindow* about_window = GTK_WINDOW(gtk_builder_get_object(builder, "org.gtk.about"));
+    g_signal_connect(about_window, "destroy", G_CALLBACK(destroy_window), GTK_WIDGET(about_window));
+
+
     // TODO change the following line
     /* gtk_widget_set_size_request(area, gdk_pixbuf_get_width(os->state->colorBuf), gdk_pixbuf_get_height(os->state->colorBuf)); */
 	
@@ -154,6 +159,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(G_OBJECT(btn_fire), "activate", G_CALLBACK(paletteFire), os);
     g_signal_connect(G_OBJECT(btn_blue), "activate", G_CALLBACK(paletteBlue), os);
     g_signal_connect(G_OBJECT(btn_file_quit), "activate", G_CALLBACK(on_quit), os);
+    g_signal_connect(G_OBJECT(main_window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     gtk_widget_show_all(GTK_WIDGET(main_window));
 
