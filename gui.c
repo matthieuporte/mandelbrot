@@ -210,7 +210,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(G_OBJECT(main_window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     gtk_widget_show_all(GTK_WIDGET(main_window));
-    /* gtk_widget_hide(GTK_WIDGET(settings_panel)); */
+    gtk_widget_hide(GTK_WIDGET(settings_panel));
 
     gtk_main();
 
