@@ -111,6 +111,11 @@ void itr_scale_update(GtkRange *range, OverallState* os) {
     os->settings->maxIt = value;
 }
 
+void theme_scale_update(GtkRange *range, OverallState* os) {
+    int value = (int)gtk_range_get_value(range);
+    os->settings->nbRepeat = value;
+}
+
 // Main function.
 int gui_run (int* argc, char** argv[], OverallState* os)
 {
@@ -155,6 +160,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     GtkMenuItem *btn_toolbar = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_toolbar"));
     GtkBox* settings_panel = GTK_BOX(gtk_builder_get_object(builder, "settings_panel"));
     GtkScale* itr_scale = GTK_SCALE(gtk_builder_get_object(builder, "itr_scale"));
+    GtkScale* theme_scale = GTK_SCALE(gtk_builder_get_object(builder, "theme_scale"));
 	GtkButton* btn_apply_settings = GTK_BUTTON(gtk_builder_get_object(builder, "btn_apply_settings"));
 
     // TODO change the following line
@@ -182,6 +188,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(area, "scroll-event", G_CALLBACK(on_scroll_event), os);
 	g_signal_connect(area, "draw", G_CALLBACK(on_draw), os);
     g_signal_connect(G_OBJECT(itr_scale), "value-changed", G_CALLBACK(itr_scale_update), os);
+    g_signal_connect(G_OBJECT(theme_scale), "value-changed", G_CALLBACK(theme_scale_update), os);
     
     g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(hello), os);
     g_signal_connect(G_OBJECT(btn_toolbar), "activate", G_CALLBACK(switchPanel), os);
