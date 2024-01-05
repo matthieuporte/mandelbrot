@@ -37,6 +37,7 @@ typedef struct AppSettings
     int nbThreads;
     int nbSteps;
     GtkScale* itr_scale;
+    GtkScale* theme_scale;
 } AppSettings;
 
 typedef struct RenderInfo

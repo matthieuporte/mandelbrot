@@ -109,11 +109,20 @@ gboolean on_quit(GtkMenuItem* item, gpointer user_data)
 void itr_scale_update(GtkRange *range, OverallState* os) {
     int value = (int)gtk_range_get_value(range);
     os->settings->maxIt = value;
+    if (os->settings->nbRepeat > value/2){
+        os->settings->nbRepeat = 3;
+        gtk_range_set_value(GTK_RANGE(os->settings->theme_scale),3);
+    }
 }
 
 void theme_scale_update(GtkRange *range, OverallState* os) {
     int value = (int)gtk_range_get_value(range);
-    os->settings->nbRepeat = value;
+    if (os->settings->maxIt < value*2){
+        os->settings->nbRepeat = 3;
+        gtk_range_set_value(range,value/2);
+    }
+    else
+        os->settings->nbRepeat = value;
 }
 
 // Main function.
@@ -177,7 +186,8 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 
     os->area = area;
     os->settings_panel = settings_panel;
-    /* os->settings->itr_scale = itr_scale; */
+    os->settings->itr_scale = itr_scale;
+    os->settings->theme_scale = theme_scale;
 
 	// Connecting signal handlers
     g_signal_connect(main_window, "destroy", G_CALLBACK(on_quit), NULL);
