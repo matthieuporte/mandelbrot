@@ -44,7 +44,6 @@ gboolean on_scroll_event(GtkWidget *widget,GdkEventScroll *event, gpointer user_
 {
     OverallState* os = user_data;
 
-        g_print("%f\n",event->delta_y);
     // Coordinates of the click
     if (event->direction == GDK_SCROLL_UP) {
         os->state->startReal += event->x/os->state->w*os->state->scroll;
@@ -58,7 +57,6 @@ gboolean on_scroll_event(GtkWidget *widget,GdkEventScroll *event, gpointer user_
         os->state->zoom += os->state->scroll;
         os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
     }
-    g_print("scrolled at coordinates (%f, %f)\n", event->x, event->y);
     
     g_source_remove(os->renderInfo->id);
     os->renderInfo->init_done = FALSE;
