@@ -7,13 +7,16 @@ int
 main (int argc, char **argv)
 {
 
+    int w = 960;
+    int h = 540;
+
 	// Initializing Application state
 	MandelbrotState* mandstate = malloc(sizeof(MandelbrotState));
 	mandstate->startReal = -2;
 	mandstate->startIm = 1;
     mandstate->zoom = 3;
     mandstate->scroll = 2;
-    mandstate->colorBuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, 960, 540);
+    mandstate->colorBuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, w, h);
     mandstate->panelHidden = TRUE;
 	
 	AppSettings* appset = malloc(sizeof(AppSettings));
@@ -26,7 +29,6 @@ main (int argc, char **argv)
     appset->nbThreads = sysconf(_SC_NPROCESSORS_ONLN);
     appset->nbSteps = 10;
     appset->transition = FALSE;
-    g_print("%d\n",appset->transition);
 
     RenderInfo* ri = malloc(sizeof(RenderInfo));
     ri->init_done = FALSE;
