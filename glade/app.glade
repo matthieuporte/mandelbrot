@@ -59,13 +59,6 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="btn_open">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Open</property>
-                      </object>
-                    </child>
-                    <child>
                       <object class="GtkMenuItem" id="btn_save">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -423,25 +416,15 @@
                   <placeholder/>
                 </child>
                 <child>
+                  <placeholder/>
+                </child>
+                <child>
                   <object class="GtkButton" id="btn_apply_settings">
                     <property name="label" translatable="yes">Redraw</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="margin-bottom">2</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">16</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="btn_reset_settings">
-                    <property name="label" translatable="yes">Reset</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

@@ -180,7 +180,7 @@
             <child>
               <object class="GtkBox" id="settings_panel">
                 <property name="name">panel_settings</property>
-                <property name="width-request">21</property>
+                <property name="width-request">120</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="orientation">vertical</property>
@@ -423,25 +423,15 @@
                   <placeholder/>
                 </child>
                 <child>
+                  <placeholder/>
+                </child>
+                <child>
                   <object class="GtkButton" id="btn_apply_settings">
                     <property name="label" translatable="yes">Redraw</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="margin-bottom">2</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">16</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="btn_reset_settings">
-                    <property name="label" translatable="yes">Reset</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

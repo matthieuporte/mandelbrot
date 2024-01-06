@@ -4,13 +4,6 @@
 #include "struct.h"
 #include "palette.h"
 
-// Signal handler for the "clicked" signal of the start button.
-void hello(GtkMenuItem *item, OverallState* os)
-{
-    g_print("Hello World\n");
-}
-
-// Signal handler for the "clicked" signal of the start button.
 
 void redraw(OverallState* os){
     g_source_remove(os->renderInfo->id);
@@ -25,6 +18,20 @@ void recalibrate(OverallState* os,int direction,double x,double y){
     os->state->zoom += (os->state->scroll)*direction*(-1);
     os->state->scroll = os->state->zoom/os->settings->scrollSpeed;
 }
+
+// Signal handler for the "clicked" signal of the start button.
+gboolean hello(GtkMenuItem *item, OverallState* os)
+{
+	os->state->startReal = -2;
+	os->state->startIm = 1;
+    os->state->zoom = 3;
+    os->state->scroll = 2;
+    redraw(os);
+    return FALSE;
+}
+
+// Signal handler for the "clicked" signal of the start button.
+
 
 gboolean coordinates(GtkWidget *widget,GdkEventButton *event, gpointer user_data)
 {
@@ -76,14 +83,6 @@ int clamp(int value, int min, int max) {
 
 gboolean on_resize(GtkWidget* widget,GdkEventConfigure *event, gpointer user_data){
     OverallState* os = user_data;
-
-    /* int width = event->width; */
-
-    /* // Ensure that the width is a multiple of 20 */
-    /* int w = width + width%20 - 20; */
-
-    /* // Set the new width */
-    /* gtk_widget_set_size_request(widget, w, -1); */
 
     int w = event->width;
     int h = event->height;
