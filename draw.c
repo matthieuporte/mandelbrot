@@ -29,14 +29,8 @@ gboolean initial_setup(OverallState* os)
 
     RenderInfo* ri = os->renderInfo;
 
-    int w = gtk_widget_get_allocated_width(GTK_WIDGET(os->area));
-    int h = gtk_widget_get_allocated_width(GTK_WIDGET(os->area));
-
-    state->colorBuf = gdk_pixbuf_scale_simple(state->colorBuf,
-            w, h, GDK_INTERP_BILINEAR);
-
-    state->w = w;
-    state->h = h;
+    int w = state->w;
+    int h = state->h;
 
     int nbSteps = os->settings->nbSteps;
     int nbThreads = os->settings->nbThreads;

@@ -11,14 +11,6 @@ void hello(GtkMenuItem *item, OverallState* os)
 }
 
 // Signal handler for the "clicked" signal of the start button.
-void switchPanel(GtkMenuItem *item, OverallState* os)
-{
-    if (os->state->panelHidden)
-        gtk_widget_show(GTK_WIDGET(os->settings_panel));
-    else
-        gtk_widget_hide(GTK_WIDGET(os->settings_panel));
-    os->state->panelHidden = !os->state->panelHidden;
-}
 
 void redraw(OverallState* os){
     g_source_remove(os->renderInfo->id);
@@ -78,8 +70,31 @@ gboolean paletteBlue(GtkMenuItem *item, gpointer user_data){
     return FALSE;
 }
 
+int clamp(int value, int min, int max) {
+    return (value < min) ? min : (value > max) ? max : value;
+}
+
 gboolean on_resize(GtkWidget* widget,GdkEventConfigure *event, gpointer user_data){
     OverallState* os = user_data;
+
+    /* int width = event->width; */
+
+    /* // Ensure that the width is a multiple of 20 */
+    /* int w = width + width%20 - 20; */
+
+    /* // Set the new width */
+    /* gtk_widget_set_size_request(widget, w, -1); */
+
+    int w = event->width;
+    int h = event->height;
+
+    os->state->colorBuf = gdk_pixbuf_scale_simple(os->state->colorBuf,
+            w, h, GDK_INTERP_BILINEAR);
+
+    os->state->w = w;
+    os->state->h = h;
+    g_print("1 - %d|%d\n",os->state->w,os->state->h);
+
     redraw(os);
     return FALSE;
 }
@@ -104,6 +119,17 @@ gboolean on_quit(GtkMenuItem* item, gpointer user_data)
 		gtk_main_quit();
 
     return TRUE;
+}
+
+
+void switchPanel(GtkMenuItem *item, OverallState* os)
+{
+    if (os->state->panelHidden)
+        gtk_widget_show(GTK_WIDGET(os->settings_panel));
+    else
+        gtk_widget_hide(GTK_WIDGET(os->settings_panel));
+    os->state->panelHidden = !os->state->panelHidden;
+    redraw(os);
 }
 
 void itr_scale_update(GtkRange *range, OverallState* os) {
@@ -166,6 +192,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 
 	// Creating GTK Widgets for window : MAIN
     GtkDrawingArea* area = GTK_DRAWING_AREA(gtk_builder_get_object(builder, "area"));
+    GtkBox* area_container = GTK_BOX(gtk_builder_get_object(builder, "area_container"));
     GtkWindow* main_window = GTK_WINDOW(gtk_builder_get_object(builder, "org.gtk.mandelbrot"));
 
 
