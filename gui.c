@@ -188,6 +188,17 @@ gboolean set_transition(GtkSwitch* s,gboolean state, OverallState* os){
     return FALSE;
 }
 
+gboolean on_help(GtkMenuItem *item, gpointer user_data){
+    const gchar *url = "https://github.com/matthieuporte/mandelbrot"; // Change this to the desired URL
+    GError *error = NULL;
+
+    // Open the URL in the default web browser
+    if (!gtk_show_uri_on_window(NULL, url, GDK_CURRENT_TIME, &error)) {
+        g_warning("Unable to open URI: %s", error->message);
+        g_error_free(error);
+    }
+}
+
 
 // Main function.
 int gui_run (int* argc, char** argv[], OverallState* os)
@@ -213,6 +224,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     /* GtkMenuBar *menubar = GTK_MENU_BAR(gtk_builder_get_object(builder, "menubar")); */
     /* GtkMenuItem *fileMenu = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_file")); */
     GtkMenuItem *settingsMenu = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_settings"));
+    GtkMenuItem *helpMenu = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_help"));
     GtkMenuItem *palettesMenu = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_palettes"));
     GtkMenuItem *btn_aether = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_aether"));
     GtkMenuItem *btn_fire = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_fire"));
@@ -272,6 +284,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(G_OBJECT(transition_switch), "state-set", G_CALLBACK(set_transition), os);
     
     g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(on_new), os);
+    g_signal_connect(G_OBJECT(helpMenu), "activate", G_CALLBACK(on_help), os);
     g_signal_connect(G_OBJECT(btn_file_save), "activate", G_CALLBACK(on_save), os);
     g_signal_connect(G_OBJECT(btn_file_save_hd), "activate", G_CALLBACK(on_save), os);
     g_signal_connect(G_OBJECT(btn_file_save_fhd), "activate", G_CALLBACK(on_save), os);
