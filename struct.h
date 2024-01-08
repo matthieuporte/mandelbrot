@@ -62,6 +62,8 @@ typedef struct OverallState
 typedef struct thread_data{
 	guchar* pix;
     size_t size;
+    int w;
+    int h;
 	point* coordinates;
     OverallState* os;
 }thread_data;

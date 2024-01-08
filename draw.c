@@ -7,7 +7,7 @@
 
 void *worker(void* arg){	
 	thread_data* d = (thread_data *)arg;
-    mandelbrot(d->pix,d->coordinates,d->size,d->os);
+    mandelbrot(d->pix,d->coordinates,d->size,d->w,d->h,d->os);
 	return NULL;
 }
 
@@ -100,6 +100,8 @@ gboolean render_step(gpointer user_data){
     for (int j = 0; j < nbThreads; j++){
         int index = ri->curStep*nbThreads + j;
         data[index].pix = pixels;
+        data[index].w = state->w;
+        data[index].h = state->h;
         data[index].coordinates = ri->coordinates+index*ri->size;
         data[index].os = os;
         data[index].size = (size_t)ri->size;
@@ -117,6 +119,51 @@ gboolean render_step(gpointer user_data){
     ri->curStep += 1;
     // Return TRUE to keep the idle callback active
     return TRUE;
+}
+
+void hd_render(GdkPixbuf* pixbuf, OverallState* os){
+
+    int w = 1920;
+    int h = 1080;
+
+    int nbThreads = os->settings->nbThreads;
+    int nbPix = w * h;
+
+    point* coordinates = malloc(nbPix*sizeof(point));
+	int size = nbPix/nbThreads;
+	int remSize = nbPix%nbThreads;
+
+
+	for (int y = 0; y < h; y++){
+		for (int x = 0; x < w; x++){
+			point p;
+			p.x = x;
+			p.y = y;
+			coordinates[y*w + x] = p;
+		}
+	}
+
+
+	GThread* thr[nbThreads];
+	thread_data data[nbThreads];
+    guchar *pixels = gdk_pixbuf_get_pixels(pixbuf);
+    
+    for (int j = 0; j < nbThreads; j++){
+        data[j].pix = pixels;
+        data[j].w = w;
+        data[j].h = h;
+        data[j].coordinates = coordinates+j*size;
+        data[j].os = os;
+        data[j].size = (size_t)size;
+        if (j == nbThreads-1){
+            data[j].size += remSize;
+        }
+        thr[j] = g_thread_new("mythread",worker,data+j);
+    }
+    for (int j = 0; j < nbThreads; j++){
+        g_thread_join(thr[j]);
+    }
+    free(coordinates);
 }
 
 gboolean on_draw(GtkWidget *widget, cairo_t *cr, gpointer user_data){

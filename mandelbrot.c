@@ -40,7 +40,7 @@ int optim1(double x, double y){
 }
 
 
-void mandelbrot(guchar* pix,point* coordinates, int n_coord, OverallState* os){
+void mandelbrot(guchar* pix,point* coordinates, int n_coord,int w,int h, OverallState* os){
 
     MandelbrotState* state = os->state;
     AppSettings* settings = os->settings;
@@ -49,8 +49,6 @@ void mandelbrot(guchar* pix,point* coordinates, int n_coord, OverallState* os){
 	int nbRepeat = settings->nbRepeat;
     int maxIt = settings->maxIt;
 
-    int w = state->w;
-    int h = state->h;
     int avg = (h+w)/2;
 
     double nudge = state->zoom/w;

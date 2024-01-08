@@ -7,7 +7,7 @@ CFLAGS = -g -lm -fsanitize=address `pkg-config --cflags gtk+-3.0`
 LDLIBS = `pkg-config --libs gtk+-3.0` -lm
 
 
-OBJ = main.o gui.o draw.o mandelbrot.o palette.o
+OBJ = main.o gui.o draw.o mandelbrot.o palette.o save.o
 DEP = ${OBJ:.o=.d}
 
 all: main
