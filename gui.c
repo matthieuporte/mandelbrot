@@ -83,6 +83,30 @@ gboolean paletteMidnight(GtkMenuItem *item, gpointer user_data){
     redraw(os);
     return FALSE;
 }
+gboolean paletteSeashore(GtkMenuItem *item, gpointer user_data){
+    OverallState* os = user_data;
+    os->settings->palette = os->settings->palette_list[5]; 
+    redraw(os);
+    return FALSE;
+}
+gboolean palettePastel(GtkMenuItem *item, gpointer user_data){
+    OverallState* os = user_data;
+    os->settings->palette = os->settings->palette_list[6]; 
+    redraw(os);
+    return FALSE;
+}
+gboolean paletteRainbow(GtkMenuItem *item, gpointer user_data){
+    OverallState* os = user_data;
+    os->settings->palette = os->settings->palette_list[4]; 
+    redraw(os);
+    return FALSE;
+}
+gboolean paletteGrayscale(GtkMenuItem *item, gpointer user_data){
+    OverallState* os = user_data;
+    os->settings->palette = os->settings->palette_list[7]; 
+    redraw(os);
+    return FALSE;
+}
 
 int clamp(int value, int min, int max) {
     return (value < min) ? min : (value > max) ? max : value;
@@ -193,6 +217,10 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     GtkMenuItem *btn_aether = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_aether"));
     GtkMenuItem *btn_fire = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_fire"));
     GtkMenuItem *btn_blue = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_blue"));
+    GtkMenuItem *btn_rainbow = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_rainbow"));
+    GtkMenuItem *btn_pastel = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_pastel"));
+    GtkMenuItem *btn_seashore = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_seashore"));
+    GtkMenuItem *btn_grayscale = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_grayscale"));
     GtkMenuItem *btn_midnight = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_midnight"));
     GtkMenuItem *btn_file_new = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_new"));
     GtkMenuItem *btn_file_save = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_save"));
@@ -254,6 +282,10 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(G_OBJECT(btn_fire), "activate", G_CALLBACK(paletteFire), os);
     g_signal_connect(G_OBJECT(btn_blue), "activate", G_CALLBACK(paletteBlue), os);
     g_signal_connect(G_OBJECT(btn_midnight), "activate", G_CALLBACK(paletteMidnight), os);
+    g_signal_connect(G_OBJECT(btn_rainbow), "activate", G_CALLBACK(paletteRainbow), os);
+    g_signal_connect(G_OBJECT(btn_seashore), "activate", G_CALLBACK(paletteSeashore), os);
+    g_signal_connect(G_OBJECT(btn_pastel), "activate", G_CALLBACK(palettePastel), os);
+    g_signal_connect(G_OBJECT(btn_grayscale), "activate", G_CALLBACK(paletteGrayscale), os);
     g_signal_connect(G_OBJECT(btn_apply_settings), "clicked", G_CALLBACK(apply_settings), os);
     g_signal_connect(G_OBJECT(btn_file_quit), "activate", G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect(G_OBJECT(main_window), "destroy", G_CALLBACK(gtk_main_quit), NULL);

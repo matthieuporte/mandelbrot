@@ -69,7 +69,7 @@ palette create_palette(size_t n, char* title ,int values[n]){
 }
 
 palette* load_palettes(){
-    int n = 4;
+    int n = 8;
     palette* l = malloc(n*sizeof(palette));
 
     int midnight[2*3] = {0,0,15,255,255,255};
@@ -84,6 +84,18 @@ palette* load_palettes(){
 
     int blue[3*3] = {0,0,0,0,0,255,255,255,255};
     l[3] = create_palette(3*3,"blue",blue);
+    
+    int rainbow[7*3] = {255,0,0, 255,153,0, 255,255,0, 0,255,0, 0,255,255, 0,0,255, 255,0,255};
+    l[4] = create_palette(7*3, "rainbow",rainbow);
+
+    int seashore[6*3] = {202,255,195, 229,230,167, 241,81,32, 132,28,23, 5,116,174, 137,211,209};
+    l[5] = create_palette(6*3, "seashore",seashore);
+
+    int pastel[5*3] = {206,208,210, 112,134,255, 255,92,148, 255,255,133, 140,238,145};
+    l[6] = create_palette(5*3, "pastel",pastel);
+
+    int grayscale[2*3] = {0,0,0,255,255,255};
+    l[7] = create_palette(2*3, "grayscale", grayscale);
 
     return l;
 }
