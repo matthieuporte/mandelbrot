@@ -121,10 +121,7 @@ gboolean render_step(gpointer user_data){
     return TRUE;
 }
 
-void hd_render(GdkPixbuf* pixbuf, OverallState* os){
-
-    int w = 1920;
-    int h = 1080;
+void custom_render(GdkPixbuf* pixbuf,int w,int h, OverallState* os){
 
     int nbThreads = os->settings->nbThreads;
     int nbPix = w * h;

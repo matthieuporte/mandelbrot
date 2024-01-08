@@ -189,6 +189,10 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     GtkMenuItem *btn_blue = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_blue"));
     GtkMenuItem *btn_file_new = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_new"));
     GtkMenuItem *btn_file_save = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_save"));
+    GtkMenuItem *btn_file_save_hd = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_hd"));
+    GtkMenuItem *btn_file_save_fhd = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_fhd"));
+    GtkMenuItem *btn_file_save_sd = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_sd"));
+    GtkMenuItem *btn_file_save_2hd = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_2hd"));
     GtkMenuItem *btn_file_quit = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_quit"));
     /* GtkMenu *submenu_file = GTK_MENU(gtk_builder_get_object(builder, "submenu_file")); */
 
@@ -234,6 +238,10 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     
     g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(on_new), os);
     g_signal_connect(G_OBJECT(btn_file_save), "activate", G_CALLBACK(on_save), os);
+    g_signal_connect(G_OBJECT(btn_file_save_hd), "activate", G_CALLBACK(on_save), os);
+    g_signal_connect(G_OBJECT(btn_file_save_fhd), "activate", G_CALLBACK(on_save), os);
+    g_signal_connect(G_OBJECT(btn_file_save_sd), "activate", G_CALLBACK(on_save), os);
+    g_signal_connect(G_OBJECT(btn_file_save_2hd), "activate", G_CALLBACK(on_save), os);
     g_signal_connect(G_OBJECT(btn_toolbar), "activate", G_CALLBACK(switchPanel), os);
     g_signal_connect(G_OBJECT(btn_aether), "activate", G_CALLBACK(paletteAether), os);
     g_signal_connect(G_OBJECT(btn_fire), "activate", G_CALLBACK(paletteFire), os);

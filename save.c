@@ -6,13 +6,32 @@
 gboolean on_save(GtkMenuItem *item, OverallState* os){
     GError *error = NULL;
 
-    /* int w = os->state->w; */
-    /* int h = os->state->h; */
+    int w;
+    int h;
+    GdkPixbuf* hdPixbuf;
 
-    GdkPixbuf* hdPixbuf = gdk_pixbuf_scale_simple(gdk_pixbuf_copy(os->state->colorBuf),
-            1920, 1080, GDK_INTERP_BILINEAR);
+    if (strcmp(gtk_menu_item_get_label(item),"Save") == 0){
+        w = os->state->w;
+        h = os->state->h;
+    } else {
+        if (strcmp(gtk_menu_item_get_label(item),"1920*1080") == 0){
+            w = 1920;
+            h = 1080;
+        } else if (strcmp(gtk_menu_item_get_label(item),"960*540") == 0){
+            w = 960;
+            h = 540;
+        } else if (strcmp(gtk_menu_item_get_label(item),"2560*1440") == 0){
+            w = 2560;
+            h = 1440;
+        } else if (strcmp(gtk_menu_item_get_label(item),"3840*2160") == 0){
+            w = 3840;
+            h = 2160;
+        }
+        hdPixbuf = gdk_pixbuf_scale_simple(gdk_pixbuf_copy(os->state->colorBuf),
+            w, h, GDK_INTERP_BILINEAR);
 
-    hd_render(hdPixbuf,os);
+        custom_render(hdPixbuf,w,h,os);
+    }
 
     time_t rawtime;
     struct tm *timeinfo;
@@ -54,15 +73,23 @@ gboolean on_save(GtkMenuItem *item, OverallState* os){
     }
 
     char *filename;
-    int res = asprintf(&filename, "%s/mandelbrot-%d-%1d-%1d_%1d-%1d-%1d.png", true_dir, year, month,day,hour,minute,second);
+    int res = asprintf(&filename, "%s/mandelbrot-%d-%02d-%02d_%02d-%02d-%02d.png", true_dir, year, month,day,hour,minute,second);
 
-    // Save the Pixbuf to the specified file
-    if (!gdk_pixbuf_save(hdPixbuf, filename, "png", &error, NULL)) {
-        // Handle the error, e.g., print an error message
-        g_printerr("Error saving Pixbuf to file: %s\n", error->message);
-        g_error_free(error);
+
+    if (strcmp(gtk_menu_item_get_label(item),"Save") != 0) {
+        if (!gdk_pixbuf_save(hdPixbuf, filename, "png", &error, NULL)) {
+            g_printerr("Error saving Pixbuf to file: %s\n", error->message);
+            g_error_free(error);
+        }
+        g_object_unref(hdPixbuf);
+    } else {
+
+        if (!gdk_pixbuf_save(os->state->colorBuf, filename, "png", &error, NULL)) {
+            g_printerr("Error saving Pixbuf to file: %s\n", error->message);
+            g_error_free(error);
+        }
     }
-    g_object_unref(hdPixbuf);
+
 
     free(filename); 
     return FALSE;
