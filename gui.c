@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include <time.h>
 #include "mandelbrot.h"
 #include "draw.h"
 #include "struct.h"
@@ -20,7 +21,7 @@ void recalibrate(OverallState* os,int direction,double x,double y){
 }
 
 // Signal handler for the "clicked" signal of the start button.
-gboolean hello(GtkMenuItem *item, OverallState* os)
+gboolean on_new(GtkMenuItem *item, OverallState* os)
 {
 	os->state->startReal = -2;
 	os->state->startIm = 1;
@@ -104,23 +105,6 @@ gboolean apply_settings(GtkWidget* widget, OverallState* os){
 }
 
 
-// Signal handler for any action that would close the program.
-gboolean on_quit(GtkMenuItem* item, gpointer user_data)
-{
-	OverallState* os = user_data;
-
-	if (os->settings->unsaved_changes == 1)
-	{
-		g_print("MANDELBROT_WARNING: the current file has unsaved changes\n");
-		/* gtk_widget_show_all(GTK_WIDGET(os->windows[1])); */
-	}
-	else
-		gtk_main_quit();
-
-    return TRUE;
-}
-
-
 void switchPanel(GtkMenuItem *item, OverallState* os)
 {
     if (os->state->panelHidden)
@@ -174,6 +158,61 @@ gboolean set_transition(GtkSwitch* s,gboolean state, OverallState* os){
     return FALSE;
 }
 
+gboolean on_save(GtkMenuItem *item, OverallState* os){
+    GError *error = NULL;
+
+    time_t rawtime;
+    struct tm *timeinfo;
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    // Extract components
+    int year = timeinfo->tm_year + 1900; // tm_year is the number of years since 1900
+    int month = timeinfo->tm_mon + 1;    // tm_mon is 0-based (0 is January)
+    int day = timeinfo->tm_mday;
+    int hour = timeinfo->tm_hour;
+    int minute = timeinfo->tm_min;
+    int second = timeinfo->tm_sec;
+
+    /* gchar *expanded_filename = g_build_filename(g_get_home_dir(), ".mandelbrotSaves/mand.png", NULL); */
+    gchar *test_dir1 = g_build_filename(g_get_home_dir(), "Pictures", NULL);
+    gchar *test_dir2 = g_build_filename(g_get_home_dir(), "pictures", NULL);
+    gchar *test_dir3 = g_build_filename(g_get_home_dir(), "Images", NULL);
+    gchar *test_dir4 = g_build_filename(g_get_home_dir(), "Mandelbrot_Saves", NULL);
+
+    gchar *dir1;
+
+    if (g_file_test(test_dir1, G_FILE_TEST_IS_DIR)) {
+        dir1 = test_dir1;
+    } else if (g_file_test(test_dir2, G_FILE_TEST_IS_DIR)){
+        dir1 = test_dir2;
+    } else if (g_file_test(test_dir3, G_FILE_TEST_IS_DIR)){
+        dir1 = test_dir3;
+    } else {
+        dir1 = "";
+    }
+
+    gchar* true_dir;
+    asprintf(&true_dir, "%s/Mandelbrot_Saves",dir1);
+
+    if (!g_file_test(true_dir, G_FILE_TEST_IS_DIR)){
+        g_mkdir_with_parents(true_dir, 0755);
+    }
+
+    char *filename;
+    int res = asprintf(&filename, "%s/mandelbrot-%d-%1d-%1d_%1d-%1d-%1d.png", true_dir, year, month,day,hour,minute,second);
+
+    // Save the Pixbuf to the specified file
+    if (!gdk_pixbuf_save(os->state->colorBuf, filename, "png", &error, NULL)) {
+        // Handle the error, e.g., print an error message
+        g_printerr("Error saving Pixbuf to file: %s\n", error->message);
+        g_error_free(error);
+    }
+    free(filename); 
+    return FALSE;
+}
+
 // Main function.
 int gui_run (int* argc, char** argv[], OverallState* os)
 {
@@ -203,6 +242,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     GtkMenuItem *btn_fire = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_fire"));
     GtkMenuItem *btn_blue = GTK_MENU_ITEM(gtk_builder_get_object(builder, "item_pa_blue"));
     GtkMenuItem *btn_file_new = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_new"));
+    GtkMenuItem *btn_file_save = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_save"));
     GtkMenuItem *btn_file_quit = GTK_MENU_ITEM(gtk_builder_get_object(builder, "btn_quit"));
     /* GtkMenu *submenu_file = GTK_MENU(gtk_builder_get_object(builder, "submenu_file")); */
 
@@ -227,17 +267,6 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     GtkSwitch* transition_switch = GTK_SWITCH(gtk_builder_get_object(builder, "transition_switch"));
 	GtkButton* btn_apply_settings = GTK_BUTTON(gtk_builder_get_object(builder, "btn_apply_settings"));
 
-    // TODO change the following line
-    /* gtk_widget_set_size_request(area, gdk_pixbuf_get_width(os->state->colorBuf), gdk_pixbuf_get_height(os->state->colorBuf)); */
-	
-	
-	/* GtkWindow** windows = malloc(sizeof(GtkWindow*)*2); // Stores references to all the app's windows; */
-	/* windows = { */
-	/* 	main_window, */ 
-	/* 	unsaved_changes_popup_window, */
-	/* }; */
-
-	/* os->windows = windows; */
 
     os->area = area;
     os->settings_panel = settings_panel;
@@ -245,7 +274,6 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     os->settings->theme_scale = theme_scale;
 
 	// Connecting signal handlers
-    g_signal_connect(main_window, "destroy", G_CALLBACK(on_quit), NULL);
     g_signal_connect(area, "configure-event", G_CALLBACK(on_resize), os);
     gtk_widget_add_events(GTK_WIDGET(area), GDK_BUTTON_PRESS_MASK);
     g_signal_connect(area, "button_press_event", G_CALLBACK(coordinates), os);
@@ -258,13 +286,14 @@ int gui_run (int* argc, char** argv[], OverallState* os)
     g_signal_connect(G_OBJECT(steps_scale), "value-changed", G_CALLBACK(steps_scale_update), os);
     g_signal_connect(G_OBJECT(transition_switch), "state-set", G_CALLBACK(set_transition), os);
     
-    g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(hello), os);
+    g_signal_connect(G_OBJECT(btn_file_new), "activate", G_CALLBACK(on_new), os);
+    g_signal_connect(G_OBJECT(btn_file_save), "activate", G_CALLBACK(on_save), os);
     g_signal_connect(G_OBJECT(btn_toolbar), "activate", G_CALLBACK(switchPanel), os);
     g_signal_connect(G_OBJECT(btn_aether), "activate", G_CALLBACK(paletteAether), os);
     g_signal_connect(G_OBJECT(btn_fire), "activate", G_CALLBACK(paletteFire), os);
     g_signal_connect(G_OBJECT(btn_blue), "activate", G_CALLBACK(paletteBlue), os);
-    g_signal_connect(G_OBJECT(btn_file_quit), "activate", G_CALLBACK(on_quit), os);
     g_signal_connect(G_OBJECT(btn_apply_settings), "clicked", G_CALLBACK(apply_settings), os);
+    g_signal_connect(G_OBJECT(btn_file_quit), "activate", G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect(G_OBJECT(main_window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     gtk_widget_show_all(GTK_WIDGET(main_window));

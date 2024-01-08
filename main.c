@@ -20,7 +20,6 @@ main (int argc, char **argv)
     mandstate->panelHidden = TRUE;
 	
 	AppSettings* appset = malloc(sizeof(AppSettings));
-	appset->unsaved_changes = 1;
     appset->palette_list = load_palettes();
     appset->palette = appset->palette_list[0];
     appset->nbRepeat = 3;
