@@ -30,7 +30,7 @@ prepare() {
 
 build() {
 	cd "$pkgname-$pkgver"
-	./configure --prefix=/usr
+	#./configure --prefix=/usr
 	make
 }
 
