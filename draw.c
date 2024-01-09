@@ -26,6 +26,7 @@ void coorShuff (point* coord,int n){
 gboolean initial_setup(OverallState* os)
 {
     MandelbrotState* state = os->state;
+    state->isRendering = 1;
 
     RenderInfo* ri = os->renderInfo;
 
@@ -84,6 +85,7 @@ gboolean render_step(gpointer user_data){
     if (ri->curStep >= os->settings->nbSteps){
         // Cleanup and return FALSE to stop the idle callback
         ri->init_done = FALSE;
+        os->state->isRendering = 0;
         return FALSE;
     }
 

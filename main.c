@@ -16,6 +16,7 @@ main (int argc, char **argv)
 	mandstate->startIm = 1;
     mandstate->zoom = 3;
     mandstate->scroll = 2;
+    mandstate->isRendering = 0;
     mandstate->colorBuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, w, h);
     mandstate->panelHidden = TRUE;
 	

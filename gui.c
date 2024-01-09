@@ -7,7 +7,8 @@
 #include "save.h"
 
 void redraw(OverallState* os){
-    g_source_remove(os->renderInfo->id);
+    if (os->state->isRendering)
+        g_source_remove(os->renderInfo->id);
     os->renderInfo->init_done = FALSE;
     os->renderInfo->id = g_idle_add(render_step,os);
     gtk_widget_queue_draw(GTK_WIDGET(os->area));
@@ -123,7 +124,6 @@ gboolean on_resize(GtkWidget* widget,GdkEventConfigure *event, gpointer user_dat
 
     os->state->w = w;
     os->state->h = h;
-    g_print("1 - %d|%d\n",os->state->w,os->state->h);
 
     redraw(os);
     return FALSE;
@@ -208,7 +208,7 @@ int gui_run (int* argc, char** argv[], OverallState* os)
   
     GtkBuilder* builder = gtk_builder_new();
     GError* error = NULL;
-    if (gtk_builder_add_from_file(builder, "./glade/app.glade", &error) == 0)
+    if (gtk_builder_add_from_file(builder, "./glade/app2.glade", &error) == 0)
     {
         g_printerr("Error loading file: %s\n", error->message);
         g_clear_error(&error);

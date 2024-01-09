@@ -14,6 +14,7 @@ typedef struct palette {
 
 typedef struct MandelbrotState 
 {
+    int isRendering;
     double startReal;
     double startIm;
     double zoom;
