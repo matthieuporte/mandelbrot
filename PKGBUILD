@@ -20,7 +20,7 @@ install=
 changelog=
 source=("$pkgname-$pkgver.tar.gz")
 noextract=()
-sha256sums=("ba55debba3e672516adb6e1b5fcf2fca47af9a9fe97852e31f37a8325843d1cb")
+sha256sums=("ec8fc62abfbb1396d3a701aee53e195e63a0875660dd3dfb65ce71db66a577cb")
 validpgpkeys=()
 
 prepare() {
@@ -30,7 +30,7 @@ prepare() {
 
 build() {
 	cd "$pkgname-$pkgver"
-	#./configure --prefix=/usr
+	./configure --prefix=/usr
 	make
 }
 
