@@ -49,8 +49,6 @@ void mandelbrot(guchar* pix,point* coordinates, int n_coord,int w,int h, Overall
 	int nbRepeat = settings->nbRepeat;
     int maxIt = settings->maxIt;
 
-    int avg = (h+w)/2;
-
     double nudge = state->zoom/w;
 
 	for (int p = 0; p < n_coord; p++){
@@ -62,14 +60,12 @@ void mandelbrot(guchar* pix,point* coordinates, int n_coord,int w,int h, Overall
             pix[(y*w + x)*3 + 0] = 0;
             pix[(y*w + x)*3 + 1] = 0;
             pix[(y*w + x)*3 + 2] = 0;
-            /* cairo_set_source_rgb(cr,0,0,0); */
 		} else {
 			int n = divergence(real,im,settings->maxIt);
 			if (n == -1){
                 pix[(y*w + x)*3 + 0] = 0;
                 pix[(y*w + x)*3 + 1] = 0;
                 pix[(y*w + x)*3 + 2] = 0;
-                /* cairo_set_source_rgb(cr,0,0,0); */
             }
 			else {
 				int bloc = maxIt/(sizePalette*nbRepeat);
@@ -82,11 +78,8 @@ void mandelbrot(guchar* pix,point* coordinates, int n_coord,int w,int h, Overall
                 pix[(y*w + x)*3 + 0] = (char)r;
                 pix[(y*w + x)*3 + 1] = (char)g;
                 pix[(y*w + x)*3 + 2] = (char)b;
-                /* cairo_set_source_rgb(cr,r,g,b); */
 			}
 		}
-        /* cairo_rectangle(cr,x,y,1,1); */
-        /* cairo_fill(cr); */
 	}
 
 }

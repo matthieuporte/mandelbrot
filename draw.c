@@ -37,22 +37,13 @@ gboolean initial_setup(OverallState* os)
     int nbThreads = os->settings->nbThreads;
     int nbPix = w * h;
 
-    GdkPixbuf* pixbuf = state->colorBuf;
-    guchar *pixels = gdk_pixbuf_get_pixels(pixbuf);
-
-    /* clock_t start_time = clock(); */
+    guchar *pixels = gdk_pixbuf_get_pixels(state->colorBuf);
 
     if (!os->settings->transition){
         for (int i = 0; i < w * h * 3; i++) {
             pixels[i] = 0;  // Set to black
         }
     }
-    
-    /* clock_t end_time = clock(); */
-
-    /* double cpu_time_used = ((double) (end_time - start_time)); */
-
-    /* g_print("%f\n",cpu_time_used); */
 
     ri->coordinates = malloc(nbPix*sizeof(point));
 	ri->size = nbPix/(nbThreads*nbSteps);

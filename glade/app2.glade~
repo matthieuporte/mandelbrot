@@ -215,14 +215,6 @@
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem" id="item_settings">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">_Settings</property>
-                <property name="use-underline">True</property>
-              </object>
-            </child>
-            <child>
               <object class="GtkMenuItem" id="item_help">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>

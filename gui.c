@@ -119,6 +119,9 @@ gboolean on_resize(GtkWidget* widget,GdkEventConfigure *event, gpointer user_dat
     int w = event->width;
     int h = event->height;
 
+    if (w%20 != 0)
+        w -= (20-w%20);
+
     os->state->colorBuf = gdk_pixbuf_scale_simple(os->state->colorBuf,
             w, h, GDK_INTERP_BILINEAR);
 
