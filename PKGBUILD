@@ -20,12 +20,12 @@ install=
 changelog=
 source=("$pkgname-$pkgver.tar.gz")
 noextract=()
-sha256sums=("b67ef8fa26e7753ad71d8f00debcddcbcd574603beee7f13142353f0b3da1976")
+sha256sums=("ba55debba3e672516adb6e1b5fcf2fca47af9a9fe97852e31f37a8325843d1cb")
 validpgpkeys=()
 
 prepare() {
 	cd "$pkgname-$pkgver"
-	#patch -p1 -i "$srcdir/$pkgname-$pkgver.patch"
+	#patch -p1 -i "$srcdr/$pkgname-$pkgver.patch"
 }
 
 build() {
