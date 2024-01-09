@@ -169,7 +169,8 @@ void theme_scale_update(GtkRange *range, OverallState* os) {
 
 
 void threads_scale_update(GtkRange *range, OverallState* os) {
-    g_source_remove(os->renderInfo->id);
+    if (os->state->isRendering)
+        g_source_remove(os->renderInfo->id);
     os->renderInfo->init_done = FALSE;
     int value = (int)gtk_range_get_value(range);
     os->settings->nbThreads = value;
@@ -178,7 +179,8 @@ void threads_scale_update(GtkRange *range, OverallState* os) {
 }
 
 void steps_scale_update(GtkRange *range, OverallState* os) {
-    g_source_remove(os->renderInfo->id);
+    if (os->state->isRendering)
+        g_source_remove(os->renderInfo->id);
     os->renderInfo->init_done = FALSE;
     int value = (int)gtk_range_get_value(range);
     os->settings->nbSteps = value;
