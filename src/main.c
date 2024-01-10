@@ -12,9 +12,9 @@ main (int argc, char **argv)
 
 	// Initializing Application state
 	MandelbrotState* mandstate = malloc(sizeof(MandelbrotState));
-	mandstate->startReal = -2;
-	mandstate->startIm = 1;
-    mandstate->zoom = 3;
+	mandstate->startReal = -2.5;
+	mandstate->startIm = 1.1;
+    mandstate->zoom = 4;
     mandstate->scroll = 2;
     mandstate->isRendering = 0;
     mandstate->colorBuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, w, h);
