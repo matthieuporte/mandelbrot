@@ -213,7 +213,8 @@ int gui_run (int* argc, char** argv[], OverallState* os)
   
     GtkBuilder* builder = gtk_builder_new();
     GError* error = NULL;
-    if (gtk_builder_add_from_file(builder, "./glade/app2.glade", &error) == 0)
+    /* if (gtk_builder_add_from_file(builder, "./glade/app.glade", &error) == 0) */
+    if (gtk_builder_add_from_file(builder, "/usr/share/mandelbrot-explorer/app.glade", &error) == 0)
     {
         g_printerr("Error loading file: %s\n", error->message);
         g_clear_error(&error);

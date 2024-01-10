@@ -1,0 +1,7 @@
+
+[Desktop Entry]
+Name=Mandelbrot Explorer
+Type=Application
+Exec=/usr/bin/mandelbrot-explorer
+Terminal=false
+Icon=multimedia-photo-viewer
