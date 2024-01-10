@@ -1,5 +1,9 @@
 # mandelbrot-explorer
 
+This is a simple mandelbrot explorer made in c with gtk.
+It allows for exploration of the mandelbrot set, with customisations features
+such as theming and control over the depth of rendering.
+
 ## Install as a package on arch
 
 run 
