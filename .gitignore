@@ -2,4 +2,8 @@
 *.d
 *.o
 *~
+*.zst
+usr
+pkg
+src
 main
