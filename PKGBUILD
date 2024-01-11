@@ -9,7 +9,7 @@ depends=("gtk3")
 
 source=("$pkgname-$pkgver.tar.gz")
 #below is generated with a makepkg -g
-sha256sums=('4ae95df5b9d28dbc9a7b03f77d4ec87b0e5e004abd4c9001f27e6dd4063e5ad8')
+sha256sums=('908cc1cfebc23fc3b9f492f69c1a4cf36bc80a420aa1a21ae9c5997c9533b9b2')
 
 build() {
     cd "$srcdir/$pkgname-$pkgver"

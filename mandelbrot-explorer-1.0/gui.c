@@ -1,5 +1,7 @@
 #include <gtk/gtk.h>
+#include <err.h>
 #include <time.h>
+#include <unistd.h>
 #include "mandelbrot.h"
 #include "draw.h"
 #include "struct.h"
@@ -210,11 +212,26 @@ int gui_run (int* argc, char** argv[], OverallState* os)
 {
     gtk_init(NULL, NULL);
 
+    char* address_glade_installed = "/usr/share/mandelbrot-explorer/app.glade";
+    char* address_glade_build = "../share/mandelbrot-explorer/app.glade";
+    char* address_glade_dev = "./glade/app.glade";
+
+    char* glade_filename;
+
+    if (access(address_glade_build, F_OK) != -1) {
+        glade_filename = address_glade_build;
+    } else if (access(address_glade_dev, F_OK) != -1) { 
+        glade_filename = address_glade_dev;
+    } else if (access(address_glade_installed, F_OK) != -1) { 
+        glade_filename = address_glade_installed;
+    } else {
+        errx(1, "glade file not found !");
+    }
+
   
     GtkBuilder* builder = gtk_builder_new();
     GError* error = NULL;
-    /* if (gtk_builder_add_from_file(builder, "./glade/app.glade", &error) == 0) */
-    if (gtk_builder_add_from_file(builder, "/usr/share/mandelbrot-explorer/app.glade", &error) == 0)
+    if (gtk_builder_add_from_file(builder, glade_filename, &error) == 0)
     {
         g_printerr("Error loading file: %s\n", error->message);
         g_clear_error(&error);
