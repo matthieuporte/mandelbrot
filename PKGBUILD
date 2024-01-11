@@ -22,8 +22,7 @@ package() {
 
     make DESTDIR="$pkgdir/" install
 
-    cd "$srcdir/.."
     pwd
-    mkdir -p "usr/share/applications"
-    cp mandelbrot-explorer.desktop "usr/share/applications"
+    mkdir -p "$pkgdir/usr/share/applications"
+    cp "../../mandelbrot-explorer.desktop" "$pkgdir/usr/share/applications"
 }
