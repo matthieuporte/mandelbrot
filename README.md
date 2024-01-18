@@ -8,6 +8,7 @@ I've done other versions, not quite as good :
  - A non-interactive version [in ocaml](https://github.com/matthieuporte/mandelbrot-ocaml)
  - A version using [sdl](https://github.com/matthieuporte/mandelbrot-sdl)
 
+Dependencies : gtk, base-devel
 
 ## Tryout the app without installing
 

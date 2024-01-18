@@ -5,7 +5,7 @@ pkgdesc="Mandelbrot Explorer written in C with GTK"
 arch=("x86_64")
 url="https://github.com/matthieuporte/mandelbrot"
 license=("GPL")
-depends=("gtk3")
+depends=("gtk3" "base-devel")
 
 source=("$pkgname-$pkgver.tar.gz")
 #below is generated with a makepkg -g
