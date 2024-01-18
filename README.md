@@ -25,10 +25,7 @@ makepkg
 sudo pacman -U mandelbrot-explorer-1.0-1-x84_64.pkg.tar.zst
 ```
 
-Then you should be able to run the program in a terminal.
-
-If you want to make it a desktop application, please copy `mandelbrot-explorer.desktop`
-in `/usr/share/applications`.
+Then you should be able to run the program in a terminal and in a launcher.
 
 
 ## Install as flatpak (for other distros)
