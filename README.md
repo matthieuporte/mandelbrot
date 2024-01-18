@@ -8,7 +8,6 @@ I've done other versions, not quite as good :
  - A non-interactive version [in ocaml](https://github.com/matthieuporte/mandelbrot-ocaml)
  - A version using [sdl](https://github.com/matthieuporte/mandelbrot-sdl)
 
----
 
 ## Tryout the app without installing
 
@@ -17,7 +16,6 @@ cd mandelbrot-explorer-1.0
 make
 ./mandelbrot-explorer
 ``` 
----
 
 ## Install as a package on arch
 
@@ -32,7 +30,6 @@ Then you should be able to run the program in a terminal.
 If you want to make it a desktop application, please copy `mandelbrot-explorer.desktop`
 in `/usr/share/applications`.
 
----
 
 ## Install as flatpak (for other distros)
 
